@@ -5,6 +5,8 @@
 	<title>Cyber Orb demo</title>
 	<link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
 	<style> body { margin: 0; background: #2B2E31 url(img/screen-bg.png) repeat; } </style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<!-- <script src="js/phaser-arcade-physics.2.2.2.min.js"></script> -->
 	<script src="js/phaser.min.js"></script>
 	<script src="js/Boot.js"></script>
@@ -13,14 +15,21 @@
 	<script src="js/Howto.js"></script>
 	<script src="js/Game.js"></script>
 
+	<script src="/socket.io/socket.io.js"></script>
+
 	<script src="js/tools.js"></script>
 	<script src="js/player.js"></script>
+	<script src="js/escenario.js"></script>
+	<script src="js/server.js"></script>
 
 </head>
 <body>
+
+<div id="game-phaser"></div>
+
 <script>
 (function() {
-	var game = new Phaser.Game(320, 480, Phaser.CANVAS, 'game');
+	var game = new Phaser.Game(320, 480, Phaser.CANVAS, 'game-phaser');
 	game.state.add('Boot', Ball.Boot);
 	game.state.add('Preloader', Ball.Preloader);
 	game.state.add('MainMenu', Ball.MainMenu);

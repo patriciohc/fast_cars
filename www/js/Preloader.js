@@ -5,14 +5,16 @@ Ball.Preloader.prototype = {
 		// this.preloadBar = this.add.sprite((Ball._WIDTH-158)*0.5, (Ball._HEIGHT-50)*0.5, 'preloaderBar');
 		// this.load.setPreloadSprite(this.preloadBar);
 
-		this.load.image('ball', 'images/car/Black_viper.png');
-
 		this.load.image('llanta', 'images/llanta.png');
 		this.load.image('meta', 'images/meta-1.png');
 		// this.load.image('hole', 'img/hole.png');
 		//this.load.image('element-w', 'img/element-w.png');
 		//this.load.image('element-h', 'img/element-h.png');
-		this.load.image('camioneta', 'images/car/Mini_truck.png');
+		this.load.image('player-0', 'images/car/Mini_truck.png');
+        this.load.image('player-1', 'images/car/Black_viper.png');
+        this.load.image('player-2', 'images/car/Audi.png');
+        this.load.image('player-3', 'images/car/Car.png');
+
 		this.load.image('car-1', 'images/car/car-1.png');
 		this.load.image('car-2', 'images/car/car-2.png');
 		this.load.image('car-3', 'images/car/car-3.png');

@@ -6,12 +6,35 @@ var tools = {
         point.y =  Math.floor((Math.random() * maxY) + minY);
 
         return point;
+    },
+
+  getDefaultConfigAjax: function(url, type, data) {
+    return {
+        type: type,
+        //contentType: "application/json; charset=utf-8",
+        crossDomain: true,
+        mimeType: "multipart/form-data",
+        url: "http://" + url,
+        data: data,
+        dataType: "json",
     }
+  },
+
+  genericFunctionError: function(err){
+    alert(err)
+  },
+
+  message: function(msg){
+    console.log(msg);
+  }
 
 };
 
 
 
+
+
+/**************************************/
 (function() {
   /**
    * Ajuste decimal de un número.
