@@ -66,8 +66,12 @@ Ball.Game.prototype = {
 			this.players[i].body.setSize(30, 68);
 			this.players[i].body.collideWorldBounds = true;
 
-			if (i == player.auto.id)
-				this.ball = this.players[i];
+			if (i == player.auto.id){
+				this.game.camera.follow(this.players[i]);
+				this.game.camera.deadzone = new Phaser.Rectangle(0, 400, 80, 80);
+				Ball._player = this.players[i];
+				//this.ball = this.players[i];
+			}
 		}
 
 /*		this.ball = this.add.sprite(this.ballStartPos.x, this.ballStartPos.y, 'ball');
@@ -77,10 +81,6 @@ Ball.Game.prototype = {
 		//this.ball.body.bounce.set(0.1, 0.1);
 		this.ball.body.collideWorldBounds = true;*/
 
-
-		this.game.camera.follow(this.ball);
-		this.game.camera.deadzone = new Phaser.Rectangle(0, 400, 80, 80);
-
 		this.initLevels();
 		this.showLevel();
 
@@ -88,7 +88,7 @@ Ball.Game.prototype = {
 		this.game.input.keyboard.onUpCallback = this.eventUpKeyBoard;
 		this.game.input.keyboard.onDownCallback = this.eventDownKeyBoard;
 
-		Ball._player = this.ball;
+		//Ball._player = this.ball;
 		window.addEventListener("deviceorientation", this.handleOrientation, true);
 
 		this.time.events.loop(Phaser.Timer.SECOND, this.updateCounter, this);
@@ -208,7 +208,7 @@ Ball.Game.prototype = {
 
 		//if (player.auto.velocity != 0)
 		//	player.auto.velocityY -= 4; // incrementa velocidad miestras no choque
-		var v = Math.round10( Math.abs(this.ball.body.velocity.y / 3), -1) // km/h
+		var v = Math.round10( Math.abs(Ball._player.body.velocity.y / 3), -1) // km/h
 		this.timerText.setText("Time: "+(this.timer)); // tiempo restante  
 		this.totalTimeText.setText("Km/h: "+ v); // km/h
 	},
@@ -228,43 +228,51 @@ Ball.Game.prototype = {
 	},
 
 	update: function() {
-		player.auto.point = this.ball.position;
+		// player.auto.point = this.ball.position;
 
-		this.ball.body.velocity.x = player.auto.getVelocityX();
+		// this.ball.body.velocity.x = player.auto.getVelocityX();
 
-		if (this.ball.position.y <= 110) {
-			this.finishLevel();
-		}
+		// if (this.ball.position.y <= 110) {
+		// 	this.finishLevel();
+		// }
 
-		if (player._velocity == "disabled") {
-			this.ball.body.velocity.y = 0;	
-		} else {
-			this.ball.body.velocity.y = player.auto.getVelocityY();
-		}
+		// if (player._velocity == "disabled") {
+		// 	this.ball.body.velocity.y = 0;	
+		// } else {
+		// 	this.ball.body.velocity.y = player.auto.getVelocityY();
+		// }
 
 		var t = 10; // tolerancia
 		for (var i in escenario.game.players){
+			
 			var p = escenario.game.players[i];
+			
 			if (p == null)
 				continue;
-			if (i == player.auto.id) // este jugador
+
+			this.players[i].body.velocity.x = p.velocityX;
+			this.players[i].body.velocity.y = p.velocityY;
+
+			this.physics.arcade.collide(this.players[i], this.levels[this.level-1], this.wallCollision, null, this);
+			this.physics.arcade.collide(this.players[i], this.llantas[this.level-1], this.wallCollision, null, this);
+			
+			if (i == player.auto.id){
+
 				continue;
+			} // este jugador
+
 			// reubicamos el auto
 			// if (this.players[i].position.x > p.point.x + t || this.players[i].position.x < p.point.x - t || 
 			// 	this.players[i].position.y > p.point.y + t || this.players[i].position.y < p.point.y - t ){
 			// 	this.players[i].position.x = p.point.x;
 			// 	this.players[i].position.y = p.point.y;
 			// }
-			//if ((p.point) != "undefined"){
-			this.players[i].body.velocity.x = p.velocityX;
-			this.players[i].body.velocity.y = p.velocityY;
-			//}
 			//this.physics.arcade.moveToXY(this.player2, p.point.x, p.point.y, 500);				
 		}
 
 		//this.physics.arcade.collide(this.ball, this.borderGroup, this.wallCollision, null, this);
-		this.physics.arcade.collide(this.ball, this.levels[this.level-1], this.wallCollision, null, this);
-		this.physics.arcade.collide(this.ball, this.llantas[this.level-1], this.wallCollision, null, this);
+		//this.physics.arcade.collide(this.ball, this.levels[this.level-1], this.wallCollision, null, this);
+		//this.physics.arcade.collide(this.ball, this.llantas[this.level-1], this.wallCollision, null, this);
 		//this.physics.arcade.overlap(this.ball, this.hole, this.finishLevel, null, this);
 	},
 
@@ -292,12 +300,12 @@ Ball.Game.prototype = {
 		player.resetVelocity();
 		player._velocity = "disabled";
 
-		var petRotation = this.add.tween(this.ball);
-      	petRotation.to({ angle: angulo }, 1000 * (angulo/360) );
-      	petRotation.onComplete.add(function(){
-      		player.resetVelocity();
-      	}, this);
-      	petRotation.start();
+		// var petRotation = this.add.tween(this.ball);
+  //     	petRotation.to({ angle: angulo }, 1000 * (angulo/360) );
+  //     	petRotation.onComplete.add(function(){
+  //     		player.resetVelocity();
+  //     	}, this);
+  //     	petRotation.start();
 
 	},
 	handleOrientation: function(e) {
@@ -323,10 +331,10 @@ Ball.Game.prototype = {
 			this.timerText.setText("Time: "+this.timer);
 			this.totalTimeText.setText("Total time: "+this.totalTimer);
 			this.levelText.setText("Level: "+this.level+" / "+this.maxLevels);
-			this.ball.body.x = this.ballStartPos.x;
-			this.ball.body.y = this.ballStartPos.y;
-			this.ball.body.velocity.x = 0;
-			this.ball.body.velocity.y = 0;
+			//this.ball.body.x = this.ballStartPos.x;
+			//this.ball.body.y = this.ballStartPos.y;
+			//this.ball.body.velocity.x = 0;
+			//this.ball.body.velocity.y = 0;
 			this.showLevel();
 		}
 	},
