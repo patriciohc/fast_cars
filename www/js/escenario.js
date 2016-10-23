@@ -7,32 +7,28 @@ var escenario = {
     init: function(isMultiplayer = false) {
         escenario.isMultiplayer = isMultiplayer;
         server.socket.on('infoPlayers', escenario.setInfoPlayers);
-        server.socket.on('startGame', escenario.startGame);
     },
-
-    createGame: function(nameGame, noPlayers){
+    // nameGame: nombre del juego
+    // noPlayers: numero de jugadores
+    // onFinish: funsion que se ejecuta cuando se ha creado el juego 
+    createGame: function(nameGame, noPlayers, onFinish){
 
         var setConfigGame = function(request){
             escenario.game = request;
-            tools.message("se ha creado juego..");
-            escenario.joinGame(escenario.game);
+            if (onFinish)
+                onFinish();
+            else
+                console.log("se ha creado un nuevo juego..."); 
         }
         server.post('/game', {nameGame: nameGame, noPlayers: noPlayers}, setConfigGame);
     },
 
-    joinGame: function(game){
+    setGame: function(game){
         escenario.game = game;
-        player.connect(escenario.game);
     },
 
     setInfoPlayers: function(data){
         escenario.game.players = data;    
     },
-
-    startGame: function(game){
-        escenario.game = game;
-        tools.message("jugadores completos");
-    }
-
 
 }

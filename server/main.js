@@ -33,7 +33,7 @@ app.get('/game', function(req, res){
 });
 
 app.post('/game', function(req, res){
-    console.log('juegador a creado nuevo juego...');
+    console.log('juegador a creado nuevo juego: ' + req.body.nameGame);
     var game = {
         id: NO_GAMES,
         nameGame: req.body.nameGame,
@@ -50,7 +50,6 @@ io.on("connection", function(socket){
 
     // jugador se unira a una partida
     socket.on('joinPlayerInGame', function(game){
-        console.log(GAMES[game.id].players.length + " - " + GAMES[game.id].noPlayers);
         if (GAMES[game.id].players.length >= GAMES[game.id].noPlayers + 1 ){
             socket.join(game.nameGame);
             socket.emit("setID", GAMES[game.id].noPlayers);

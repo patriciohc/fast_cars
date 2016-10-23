@@ -8,15 +8,15 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<!-- <script src="js/phaser-arcade-physics.2.2.2.min.js"></script> -->
-	<script src="js/phaser.min.js"></script>
-	<script src="js/Boot.js"></script>
-	<script src="js/Preloader.js"></script>
-	<script src="js/MainMenu.js"></script>
-	<script src="js/Howto.js"></script>
-	<script src="js/Game.js"></script>
-
+	<script src="js/libs/phaser.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 
+	<script src="js/Game/Boot.js"></script>
+	<script src="js/Game/Preloader.js"></script>
+	<script src="js/Game/AdjustVelocity.js"></script>
+	<script src="js/Game/Game.js"></script>
+
+	<script src="js/main.js"></script>
 	<script src="js/tools.js"></script>
 	<script src="js/player.js"></script>
 	<script src="js/escenario.js"></script>
@@ -25,18 +25,14 @@
 </head>
 <body>
 
-<div id="game-phaser"></div>
+	<div id="game-phaser"></div>
 
 <script>
-(function() {
-	var game = new Phaser.Game(320, 480, Phaser.CANVAS, 'game-phaser');
-	game.state.add('Boot', Ball.Boot);
-	game.state.add('Preloader', Ball.Preloader);
-	game.state.add('MainMenu', Ball.MainMenu);
-	game.state.add('Howto', Ball.Howto);
-	game.state.add('Game', Ball.Game);
-	game.state.start('Boot');
-})();
+
+window.onload = function(){
+    main.init();
+}
+
 </script>
 </body>
 </html>
