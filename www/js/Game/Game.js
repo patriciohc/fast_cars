@@ -70,7 +70,6 @@ Ball.Game.prototype = {
 				this.game.camera.follow(this.players[i]);
 				this.game.camera.deadzone = new Phaser.Rectangle(0, 400, 80, 80);
 				Ball._player = this.players[i];
-				//this.ball = this.players[i];
 			}
 		}
 
@@ -83,6 +82,8 @@ Ball.Game.prototype = {
 
 		this.initLevels();
 		this.showLevel();
+
+
 
 		//this.keys = this.game.input.keyboard.createCursorKeys();
 		this.game.input.keyboard.onUpCallback = this.eventUpKeyBoard;
@@ -110,11 +111,11 @@ Ball.Game.prototype = {
 				break;
 
 			case "ArrowLeft":
-				player.auto.setVelocityX(0);
+				player.xNotMove();
 				break;
 
 			case "ArrowRight":			
-				player.auto.setVelocityX(0);
+				player.xNotMove();
 				break;
 		}
 
@@ -124,11 +125,11 @@ Ball.Game.prototype = {
 
 		switch(evt.key){
 			case "ArrowLeft":
-				player.auto.setVelocityX(-100);
+				player.moveLeft();
 				break;
 
 			case "ArrowRight":
-				player.auto.setVelocityX(100);
+				player.moveRight();
 				break;
 		}
 	},
@@ -342,4 +343,5 @@ Ball.Game.prototype = {
 		// this.game.debug.body(this.ball);
 		// this.game.debug.body(this.hole);
 	}
+
 };

@@ -49,6 +49,6 @@ Ball.Preloader.prototype = {
         this.load.image('rigth', 'assets/images/interface_buttons/right_orange.png');
 	},
 	create: function() {
-		this.game.state.start('MainMenu');
+		this.game.state.start('AdjustVelocity');
 	}
 };
