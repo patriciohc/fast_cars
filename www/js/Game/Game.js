@@ -1,7 +1,7 @@
 Ball.Game = function(game) {};
 Ball.Game.prototype = {
 	create: function() {
-		this.roadLength = 50000;
+		this.roadLength = escenario.roadLength;
 
 		this.add.tileSprite(0, 0, 320, this.roadLength, 'screen-bg');
 
@@ -17,11 +17,10 @@ Ball.Game.prototype = {
 		this.audioStatus = true;
 		this.timer = 150;
 		this.totalTimer = 0;
-		this.level = 1;
-		this.maxLevels = 5;
-		this.movementForce = 5;
-		this.velocity = 0;
-		this.ballStartPos = { x: 20 + Ball._WIDTH*0.15 * player.auto.id, y: this.roadLength - 200 };
+		//this.level = 1;
+		//this.maxLevels = 5;
+		//this.movementForce = 5;
+		//this.ballStartPos = { x: 20 + Ball._WIDTH*0.15 * player.auto.id, y: this.roadLength - 200 };
 
 		this.panel = this.add.group();
 
@@ -44,7 +43,10 @@ Ball.Game.prototype = {
 		this.timerText = this.game.add.text(15, 15, "Km/h: "+ 0, this.fontBig);
 		this.panel.add(this.timerText);
 
-		this.levelText = this.game.add.text(120, 10, "Level: "+this.level+" / "+this.maxLevels, this.fontSmall);
+		//this.levelText = this.game.add.text(120, 10, "Level: "+this.level+" / "+this.maxLevels, this.fontSmall);
+		//this.panel.add(this.levelText);
+
+		this.levelText = this.game.add.text(120, 10, "Lugar: "+ 0 +" / "+ escenario.game.players.length, this.fontSmall);
 		this.panel.add(this.levelText);
 
 		this.totalTimeText = this.game.add.text(120, 30, "Total time: "+this.totalTimer, this.fontSmall);
@@ -56,22 +58,42 @@ Ball.Game.prototype = {
 
 		this.players = new Array(escenario.game.players.length);
 
-		for (var i in escenario.game.players){
-			var p = escenario.game.players[i];
-			p.point.x = 60 + Ball._WIDTH*0.15 * i;
-			p.point.y = this.ballStartPos.y
-			this.players[i] = this.add.sprite(p.point.x, p.point.y, 'player-' + i);
-			this.players[i].anchor.set(0.5);
-			this.physics.enable(this.players[i], Phaser.Physics.ARCADE);
-			this.players[i].body.setSize(30, 68);
-			this.players[i].body.collideWorldBounds = true;
+		for (var i in this.players){
+			this.players[i] = {};
+			this.players[i].info = escenario.game.players[i];
+			this.players[i].info.point.x = 60 + Ball._WIDTH * 0.15 * i;
+			this.players[i].info.point.y = this.roadLength - 200;
+			this.players[i].graphics = this.add.sprite(
+				this.players[i].info.point.x, 
+				this.players[i].info.point.y, 
+				'player-' + i
+			);
+			this.players[i].graphics.anchor.set(0.5);
+			this.physics.enable(this.players[i].graphics, Phaser.Physics.ARCADE);
+			this.players[i].graphics.body.setSize(30, 68);
+			this.players[i].graphics.body.collideWorldBounds = true;
 
-			if (i == player.auto.id){
-				this.game.camera.follow(this.players[i]);
+			if (this.players[i].info.id == player.auto.id) { // si se cumple se trata de este player
+				this.game.camera.follow(this.players[i].graphics);
 				this.game.camera.deadzone = new Phaser.Rectangle(0, 400, 80, 80);
-				Ball._player = this.players[i];
+				Ball._player = this.players[i].graphics;
 			}
 		}
+
+		//for (var i in escenario.game.players) {
+			//var p = escenario.game.players[i]; 
+			//this.players[i] = this.add.sprite(p.point.x, p.point.y, 'player-' + i);
+			//this.players[i].anchor.set(0.5);
+			//this.physics.enable(this.players[i], Phaser.Physics.ARCADE);
+			//this.players[i].body.setSize(30, 68);
+			//this.players[i].body.collideWorldBounds = true;
+
+			// if (p.id == player.auto.id) {
+			// 	this.game.camera.follow(this.players[i]);
+			// 	this.game.camera.deadzone = new Phaser.Rectangle(0, 400, 80, 80);
+			// 	Ball._player = this.players[i];
+			// }
+		//}
 
 /*		this.ball = this.add.sprite(this.ballStartPos.x, this.ballStartPos.y, 'ball');
 		this.ball.anchor.set(0.5);
@@ -80,23 +102,17 @@ Ball.Game.prototype = {
 		//this.ball.body.bounce.set(0.1, 0.1);
 		this.ball.body.collideWorldBounds = true;*/
 
-		this.initLevels();
-		this.showLevel();
-
-
+		//this.initLevels();
+		//this.showLevel();
 
 		//this.keys = this.game.input.keyboard.createCursorKeys();
 		this.game.input.keyboard.onUpCallback = this.eventUpKeyBoard;
 		this.game.input.keyboard.onDownCallback = this.eventDownKeyBoard;
 
-		//Ball._player = this.ball;
 		window.addEventListener("deviceorientation", this.handleOrientation, true);
-
 		this.time.events.loop(Phaser.Timer.SECOND, this.updateCounter, this);
-
 		this.bounceSound = this.game.add.audio('audio-bounce');
-
-		//player.init();
+		this.showObstaculos();
 	},
 
 	eventUpKeyBoard: function(evt){
@@ -135,69 +151,31 @@ Ball.Game.prototype = {
 	},
 
 
-	initLevels: function() {
-		var getObstaculos = function(nObstaculos, minX, maxX, minY, maxY){
-			var obstaculos = [];
-			for (var i = 0; i < nObstaculos; i++) {
-				obstaculos.push( tools.getRandomPoint(minX, maxX, minY, maxY) );
-			}
-			return obstaculos;
-		};
+	showObstaculos: function() {
 
+		this.carsNoPlayers = this.add.group();
+		this.carsNoPlayers.enableBody = true;
+		this.carsNoPlayers.physicsBodyType = Phaser.Physics.ARCADE;
+		for(var e=0; e<escenario.carsNoPlayers.length; e++) {
+			var item = escenario.carsNoPlayers[e];
+			this.carsNoPlayers.create(item.x, item.y, 'car-' + item.t );
+		}
+		this.carsNoPlayers.setAll("body.velocity.y", - Math.floor((Math.random() * 400) + 50));
+			//newLevel.visible = false;
+			//this.levels.push(newLevel);
 
-		this.levels = [];
-		this.llantas = [];
-		this.carsNoPlayers = [
-			getObstaculos(20, 80, 200, 1000, this.roadLength+(this.roadLength*0.1)),
-			getObstaculos(40, 80, 200, 1000, this.roadLength+(this.roadLength*0.1)),
-			getObstaculos(60, 80, 200, 1000, this.roadLength+(this.roadLength*0.1)),
-			getObstaculos(80, 80, 200, 1000, this.roadLength+(this.roadLength*0.1)),
-			getObstaculos(100, 80, 200, 1000, this.roadLength+(this.roadLength*0.1)),
-		];
-
-		this.obstaculos = [
-			getObstaculos(10, 80, 200, 1000, this.roadLength+(this.roadLength*0.1)),
-			getObstaculos(20, 80, 200, 1000, this.roadLength+(this.roadLength*0.1)),
-			getObstaculos(30, 80, 200, 1000, this.roadLength+(this.roadLength*0.1)),
-			getObstaculos(40, 80, 200, 1000, this.roadLength+(this.roadLength*0.1)),
-			getObstaculos(50, 80, 200, 1000, this.roadLength+(this.roadLength*0.1)),
-		];
-
-		for(var i=0; i<this.maxLevels; i++) {
-			var newLevel = this.add.group();
-			newLevel.enableBody = true;
-			newLevel.physicsBodyType = Phaser.Physics.ARCADE;
-			for(var e=0; e<this.carsNoPlayers[i].length; e++) {
-				var item = this.carsNoPlayers[i][e];
-				newLevel.create(item.x, item.y, 'car-' + Math.ceil(Math.random() * 3));
-			}
-			newLevel.setAll("body.velocity.y", - Math.floor((Math.random() * 400) + 50));
-			newLevel.visible = false;
-			this.levels.push(newLevel);
-
-
-			var llantas = this.add.group();
-			llantas.enableBody = true;
-			llantas.physicsBodyType = Phaser.Physics.ARCADE;
-			for(var e=0; e<this.obstaculos[i].length; e++) {
-				var item = this.obstaculos[i][e];
-				llantas.create(item.x, item.y, 'llanta');
-			}
-			llantas.setAll('body.immovable', true);
+		this.obstaculos = this.add.group();
+		this.obstaculos.enableBody = true;
+		this.obstaculos.physicsBodyType = Phaser.Physics.ARCADE;
+		for(var e=0; e<escenario.obstaculos.length; e++) {
+			var item = escenario.obstaculos[e];
+			this.obstaculos.create(item.x, item.y, 'obstaculo-' + item.t);
+		}
+		this.obstaculos.setAll('body.immovable', true);
 			//newLevel.setAll("body.velocity.y", - Math.floor((Math.random() * 400) + 50));
-			llantas.visible = false;
-			this.llantas.push(llantas);
+			//this.obstaculos.visible = false;
+			//this.llantas.push(llantas);
 
-		}
-	},
-
-	showLevel: function(level) {
-		var lvl = level | this.level;
-		if(this.levels[lvl-2]) {
-			this.levels[lvl-2].visible = false;
-		}
-		this.levels[lvl-1].visible = true;
-		this.llantas[lvl-1].visible = true;
 	},
 
 	updateCounter: function() {
@@ -223,52 +201,49 @@ Ball.Game.prototype = {
 			this.game.paused = false;
 		}, this);
 	},
+
 	manageAudio: function() {
 		this.audioStatus =! this.audioStatus;
 		this.audioButton.animations.play(this.audioStatus);
 	},
 
 	update: function() {
-		// player.auto.point = this.ball.position;
+		//player.auto.point = this.ball.position;
 
-		// this.ball.body.velocity.x = player.auto.getVelocityX();
+		this.players.sort(function (a, b) {
+  			if (a.graphics.position.y > b.graphics.position.y) {
+    				return 1;
+  			}
+  			if (a.graphics.position.y < b.graphics.position.y) {
+    				return -1;
+  			}
+  			return 0;
+		});
 
-		// if (this.ball.position.y <= 110) {
-		// 	this.finishLevel();
-		// }
-
-		// if (player._velocity == "disabled") {
-		// 	this.ball.body.velocity.y = 0;	
-		// } else {
-		// 	this.ball.body.velocity.y = player.auto.getVelocityY();
-		// }
-
-		var t = 10; // tolerancia
-		for (var i in escenario.game.players){
+		for (var i in this.players){
 			
-			var p = escenario.game.players[i];
+			var info = this.players[i].info;
+			var graphics = this.players[i].graphics;
 			
 			if (p == null)
 				continue;
 
-			this.players[i].body.velocity.x = p.velocityX;
-			this.players[i].body.velocity.y = p.velocityY;
+			graphics.body.velocity.x = info.velocityX;
+			graphics.body.velocity.y = info.velocityY;
 
-			this.physics.arcade.collide(this.players[i], this.levels[this.level-1], this.wallCollision, null, this);
-			this.physics.arcade.collide(this.players[i], this.llantas[this.level-1], this.wallCollision, null, this);
-			
-			if (i == player.auto.id){
+			this.physics.arcade.collide(graphics, this.carsNoPlayers, this.wallCollision, null, this);
+			this.physics.arcade.collide(graphics, this.obstaculos, this.wallCollision, null, this);
 
-				continue;
-			} // este jugador
+			if (info.id == player.auto.id){
+				this.levelText.setText("Lugar: "+ (i + 1) +" / "+ escenario.game.players.length);
+			}
 
 			// reubicamos el auto
 			// if (this.players[i].position.x > p.point.x + t || this.players[i].position.x < p.point.x - t || 
 			// 	this.players[i].position.y > p.point.y + t || this.players[i].position.y < p.point.y - t ){
 			// 	this.players[i].position.x = p.point.x;
 			// 	this.players[i].position.y = p.point.y;
-			// }
-			//this.physics.arcade.moveToXY(this.player2, p.point.x, p.point.y, 500);				
+			// }				
 		}
 
 		//this.physics.arcade.collide(this.ball, this.borderGroup, this.wallCollision, null, this);
@@ -277,7 +252,7 @@ Ball.Game.prototype = {
 		//this.physics.arcade.overlap(this.ball, this.hole, this.finishLevel, null, this);
 	},
 
-	wallCollision: function(evt) {
+	wallCollision: function(obj1, obj2) {
 		if(this.audioStatus) {
 			this.bounceSound.play();
 		}
@@ -299,14 +274,14 @@ Ball.Game.prototype = {
 		}
 
 		player.resetVelocity();
-		player._velocity = "disabled";
+		player.disabledVelocity();
 
-		// var petRotation = this.add.tween(this.ball);
-  //     	petRotation.to({ angle: angulo }, 1000 * (angulo/360) );
-  //     	petRotation.onComplete.add(function(){
-  //     		player.resetVelocity();
-  //     	}, this);
-  //     	petRotation.start();
+		var petRotation = this.add.tween(obj1);
+      	petRotation.to({ angle: angulo }, 1000 * (angulo/360) );
+      	petRotation.onComplete.add(function(){
+      		player.resetVelocity();
+      	}, this);
+      	petRotation.start();
 
 	},
 	handleOrientation: function(e) {

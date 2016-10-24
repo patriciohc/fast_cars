@@ -5,7 +5,11 @@ Ball.Preloader.prototype = {
 		// this.preloadBar = this.add.sprite((Ball._WIDTH-158)*0.5, (Ball._HEIGHT-50)*0.5, 'preloaderBar');
 		// this.load.setPreloadSprite(this.preloadBar);
 
-		this.load.image('llanta', 'images/llanta.png');
+		this.load.image('obstaculo-0', 'images/llanta.png');
+        this.load.image('obstaculo-1', 'images/llanta.png');
+        this.load.image('obstaculo-2', 'images/llanta.png');
+        this.load.image('obstaculo-3', 'images/llanta.png');
+
 		this.load.image('meta', 'images/meta-1.png');
 		// this.load.image('hole', 'img/hole.png');
 		//this.load.image('element-w', 'img/element-w.png');

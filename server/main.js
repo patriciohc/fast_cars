@@ -28,7 +28,7 @@ app.get('/game', function(req, res){
     var games = LINQ.from(GAMES)
         .where(function(x){ return x.status == 'waiting'} )
         .select(function(x){ return x}).toArray();
-
+    console.log("GET /game");
     res.send(games);
 });
 
@@ -49,16 +49,27 @@ app.post('/game', function(req, res){
 io.on("connection", function(socket){
 
     // jugador se unira a una partida
-    socket.on('joinPlayerInGame', function(game){
-        if (GAMES[game.id].players.length >= GAMES[game.id].noPlayers + 1 ){
-            socket.join(game.nameGame);
-            socket.emit("setID", GAMES[game.id].noPlayers);
+    socket.on('joinPlayerInGame', function(req) {
+        if (GAMES[req.idGame].players.length >= GAMES[req.idGame].noPlayers + 1 ){
+            socket.join(req.nameGame);
+            GAMES[req.idGame].players[GAMES[req.idGame].noPlayers].id = req.idPlayer;
+            //socket.emit("setID", GAMES[game.id].noPlayers);
 
-            if (GAMES[game.id].players.length == GAMES[game.id].noPlayers + 1 ){
-                GAMES[game.id].status = 'running';
-                io.to(game.nameGame).emit('startGame', GAMES[game.id]);               
+            if (GAMES[req.idGame].players.length == GAMES[req.idGame].noPlayers + 1 ){
+
+                var roadLength = 50000;
+
+                var data = {
+                    carsNoPlayers: getObstaculos(20, 80, 200, 1000, roadLength+100),
+                    obstaculos: getObstaculos(20, 80, 200, 1000, roadLength+100),
+                    roadLength: roadLength,
+                };
+
+                io.to(req.nameGame).emit('setEscenario', data);           
+                GAMES[req.idGame].status = 'running';
+                io.to(req.nameGame).emit('startGame', GAMES[req.idGame]);               
             } else {
-                GAMES[game.id].noPlayers += 1;
+                GAMES[req.idGame].noPlayers += 1;
             }
 
         } else {
@@ -67,24 +78,18 @@ io.on("connection", function(socket){
     });
 
     socket.on('infoPlayer', function(req){
-        GAMES[req.idGame].players[req.idPlayer] = req.info;
+        //GAMES[req.idGame].players[req.idPlayer] = req.info;
+        GAMES[req.idGame].players.find(function(item){
+            if (item.id == req.idPlayer)
+                return true;
+            else 
+                return false;
+        }).info = req.info;
         io.to(req.nameGame).emit('infoPlayers', GAMES[req.idGame].players);
     });
 
     
 });
-
-
-// var timer = setInterval(function(){
-//     var gamesRuninng; 
-//     for (var i in gamesRuninng){
-//         var game = gamesRuninng[i];
-//         io.to(game.nameGame).emit(game.players);
-//         game.players.fill(null);
-//     } 
-//     //io.sockets.emit("positions", PLAYERS);
-//     //PLAYERS = [null, null, null, null];
-// }, 50);
 
 
 
@@ -102,8 +107,25 @@ function initPlayers(n){
 
 function getConfigAuto(){
     return {
-        point: {x:0, y:0},
-        velocityX: 0,
-        velocityY: 0,
+        id: null,
+        info: {
+            point: {x:0, y:0},
+            velocityX: 0,
+            velocityY: 0,
+        }
     }
+}
+
+
+function getObstaculos (nObstaculos, minX, maxX, minY, maxY){
+    var obstaculos = [];
+    for (var i = 0; i < nObstaculos; i++) {
+        var element = {};
+        element.x = Math.floor((Math.random() * maxX) + minX);
+        element.y = Math.floor((Math.random() * maxY) + minY); 
+        element.v = -Math.floor((Math.random() * 400) + 50); // velocidad
+        element.t = Math.ceil(Math.random() * 3); // tipo de carro
+        obstaculos.push( element );
+    }
+    return obstaculos;
 }

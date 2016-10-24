@@ -7,6 +7,7 @@ var main = {
     init: function(){
         server.init(); // inicializa la conexion con el servidor
         escenario.init(true);
+        player.init();
         server.socket.on('startGame', main.startGame); // espera mensaje del serivdor para iniciar juego
 
         /*

@@ -1,11 +1,14 @@
 
 var escenario = {
 
-    game: null, // informacion del juego 
+    game: null, // informacion del juego
+    carsNoPlayers: null,
+    obstaculos: null,
     isMultiplayer: null,
 
     init: function(isMultiplayer = false) {
         escenario.isMultiplayer = isMultiplayer;
+        server.socket.on('setEscenario', escenario.setEscenario);
         server.socket.on('infoPlayers', escenario.setInfoPlayers);
     },
     // nameGame: nombre del juego
@@ -29,6 +32,12 @@ var escenario = {
 
     setInfoPlayers: function(data){
         escenario.game.players = data;    
+    },
+
+    setEscenario: function(data){
+        escenario.carsNoPlayers = data.carsNoPlayers;
+        escenario.obstaculos = data.obstaculos;
+        escenario.roadLength = data.roadLength;
     },
 
 }
