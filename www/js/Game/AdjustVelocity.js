@@ -9,7 +9,7 @@ Ball.AdjustVelocity.prototype = {
 	create: function() {
 
 		this.TIEMPO = 5000; // timpo deseado recorrer extremo a extremo
-		this.TOLERANCIA = 20; // tolerancia en milisegundos
+		this.TOLERANCIA = 50; // tolerancia en milisegundos
 
 		this.velocity = 100;
 		this.timeInit = new Date().getTime();
@@ -39,7 +39,7 @@ Ball.AdjustVelocity.prototype = {
 
 			if (this.TIEMPO - this.TOLERANCIA < time && this.TIEMPO + this.TOLERANCIA > time ) {
 				console.log("velocidad ajustada correctamente,  tiempo obtenido: " + time);
-				player.setFactorVelocity(this.velocity * 2, this.velocity * 3);
+				Player.setFactorVelocity(this.velocity * 2, this.velocity * 3);
 				this.game.state.start('Game');
 			}
 

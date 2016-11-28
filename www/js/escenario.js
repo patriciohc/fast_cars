@@ -10,16 +10,17 @@ var escenario = {
         escenario.isMultiplayer = isMultiplayer;
         server.socket.on('setEscenario', escenario.setEscenario);
         server.socket.on('infoPlayers', escenario.setInfoPlayers);
+        server.socket.on('onWin', escenario.onWin);
     },
     // nameGame: nombre del juego
     // noPlayers: numero de jugadores
-    // onFinish: funsion que se ejecuta cuando se ha creado el juego 
+    // onFinish: funcion que se ejecuta cuando se ha creado el juego 
     createGame: function(nameGame, noPlayers, onFinish){
 
         var setConfigGame = function(request){
             escenario.game = request;
             if (onFinish)
-                onFinish();
+                onFinish(request);
             else
                 console.log("se ha creado un nuevo juego..."); 
         }
@@ -39,5 +40,9 @@ var escenario = {
         escenario.obstaculos = data.obstaculos;
         escenario.roadLength = data.roadLength;
     },
+
+    onWin: function(player){
+        alert("Jugador ganador: " + player.id);
+    }
 
 }

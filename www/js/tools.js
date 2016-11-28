@@ -25,12 +25,11 @@ var tools = {
   },
 
   message: function(msg){
-    alert(msg);
+    //alert(msg);
     console.log(msg);
   }
 
 };
-
 
 
 

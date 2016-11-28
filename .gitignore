@@ -1,0 +1,7 @@
+www/libs/
+backups/
+config.xml
+hooks/
+node_modules/
+platforms/
+plugins/

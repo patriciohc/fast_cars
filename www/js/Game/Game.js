@@ -58,14 +58,12 @@ Ball.Game.prototype = {
 
 		this.players = new Array(escenario.game.players.length);
 
-		for (var i in this.players){
+		for (var i = 0; i < this.players.length; i++){
 			this.players[i] = {};
-			this.players[i].info = escenario.game.players[i];
-			this.players[i].info.point.x = 60 + Ball._WIDTH * 0.15 * i;
-			this.players[i].info.point.y = this.roadLength - 200;
+			this.players[i].id = escenario.game.players[i].id;
 			this.players[i].graphics = this.add.sprite(
-				this.players[i].info.point.x, 
-				this.players[i].info.point.y, 
+				(60 + Ball._WIDTH * 0.15 * i), 
+				(this.roadLength - 200), 
 				'player-' + i
 			);
 			this.players[i].graphics.anchor.set(0.5);
@@ -73,34 +71,14 @@ Ball.Game.prototype = {
 			this.players[i].graphics.body.setSize(30, 68);
 			this.players[i].graphics.body.collideWorldBounds = true;
 
-			if (this.players[i].info.id == player.auto.id) { // si se cumple se trata de este player
+			if (this.players[i].id == Player.auto.id) { // si se cumple se trata de este player
 				this.game.camera.follow(this.players[i].graphics);
 				this.game.camera.deadzone = new Phaser.Rectangle(0, 400, 80, 80);
 				Ball._player = this.players[i].graphics;
 			}
 		}
 
-		//for (var i in escenario.game.players) {
-			//var p = escenario.game.players[i]; 
-			//this.players[i] = this.add.sprite(p.point.x, p.point.y, 'player-' + i);
-			//this.players[i].anchor.set(0.5);
-			//this.physics.enable(this.players[i], Phaser.Physics.ARCADE);
-			//this.players[i].body.setSize(30, 68);
-			//this.players[i].body.collideWorldBounds = true;
-
-			// if (p.id == player.auto.id) {
-			// 	this.game.camera.follow(this.players[i]);
-			// 	this.game.camera.deadzone = new Phaser.Rectangle(0, 400, 80, 80);
-			// 	Ball._player = this.players[i];
-			// }
-		//}
-
-/*		this.ball = this.add.sprite(this.ballStartPos.x, this.ballStartPos.y, 'ball');
-		this.ball.anchor.set(0.5);
-		this.physics.enable(this.ball, Phaser.Physics.ARCADE);
-		this.ball.body.setSize(30, 68);
-		//this.ball.body.bounce.set(0.1, 0.1);
-		this.ball.body.collideWorldBounds = true;*/
+/*		this.ball.body.collideWorldBounds = true;*/
 
 		//this.initLevels();
 		//this.showLevel();
@@ -119,19 +97,19 @@ Ball.Game.prototype = {
 
 		switch(evt.key){
 			case "ArrowUp":
-				player.incVelocity();
+				Player.incVelocity();
 				break;
 
 			case "ArrowDown": 
-				player.decVelocity();
+				Player.decVelocity();
 				break;
 
 			case "ArrowLeft":
-				player.xNotMove();
+				Player.xNotMove();
 				break;
 
 			case "ArrowRight":			
-				player.xNotMove();
+				Player.xNotMove();
 				break;
 		}
 
@@ -141,11 +119,11 @@ Ball.Game.prototype = {
 
 		switch(evt.key){
 			case "ArrowLeft":
-				player.moveLeft();
+				Player.moveLeft();
 				break;
 
 			case "ArrowRight":
-				player.moveRight();
+				Player.moveRight();
 				break;
 		}
 	},
@@ -221,11 +199,20 @@ Ball.Game.prototype = {
 		});
 
 		for (var i in this.players){
+			var player = this.players[i];
+			var graphics = player.graphics;
 			
-			var info = this.players[i].info;
-			var graphics = this.players[i].graphics;
-			
-			if (p == null)
+			if (graphics === null)
+				continue;
+
+			var info = escenario.game.players.find(function(item){
+				if (item.id === player.id)
+					return true;
+				else 
+					return false;
+			}).info;
+
+			if (info === null)
 				continue;
 
 			graphics.body.velocity.x = info.velocityX;
@@ -234,8 +221,11 @@ Ball.Game.prototype = {
 			this.physics.arcade.collide(graphics, this.carsNoPlayers, this.wallCollision, null, this);
 			this.physics.arcade.collide(graphics, this.obstaculos, this.wallCollision, null, this);
 
-			if (info.id == player.auto.id){
-				this.levelText.setText("Lugar: "+ (i + 1) +" / "+ escenario.game.players.length);
+			if (player.id == Player.auto.id){
+				this.levelText.setText("Lugar: "+ (parseInt(i) + 1) +" / "+ escenario.game.players.length);
+				if (graphics.position.y <= 100 ){
+					Player.sendWin();
+				}
 			}
 
 			// reubicamos el auto
@@ -262,24 +252,15 @@ Ball.Game.prototype = {
 		}
 
 		
-		var angulo = 0;
-		if ( player.auto.velocity == 1 ){
-			angulo = 360;
-		} else if ( player.auto.velocity == 2 ){
-			angulo = 720;
-		} else if ( player.auto.velocity == 3 ) {
-			angulo = 1080;
-		} else if ( player.auto.velocity == 4 ) {
-			angulo = 1440;
-		}
+		var angulo = Player._velocity * 360;
 
-		player.resetVelocity();
-		player.disabledVelocity();
+		Player.resetVelocity();
+		Player.disabledVelocity();
 
 		var petRotation = this.add.tween(obj1);
       	petRotation.to({ angle: angulo }, 1000 * (angulo/360) );
       	petRotation.onComplete.add(function(){
-      		player.resetVelocity();
+      		Player.resetVelocity();
       	}, this);
       	petRotation.start();
 
@@ -289,8 +270,8 @@ Ball.Game.prototype = {
 		var x = e.gamma; // range [-90,90], left-right
 		var y = e.beta;  // range [-180,180], top-bottom
 		var z = e.alpha; // range [0,360], up-down
-		Ball._player.body.velocity.x += x;
-		Ball._player.body.velocity.y += y*0.5;
+		//Ball._player.body.velocity.x += x;
+		//Ball._player.body.velocity.y += y*0.5;
 	},
 
 	finishLevel: function() {

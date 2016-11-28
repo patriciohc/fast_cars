@@ -4,11 +4,13 @@
 	<meta charset="utf-8" />
 	<title>Cyber Orb demo</title>
 	<link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
-	<style> body { margin: 0; background: #2B2E31 url(img/screen-bg.png) repeat; } </style>
+<!--	<style> body { margin: 0; background: #2B2E31 url(img/screen-bg.png) repeat; } </style>-->
+    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css" />
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="libs/jquery/dist/jquery.min.js"></script>
+    <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
 	<!-- <script src="js/phaser-arcade-physics.2.2.2.min.js"></script> -->
-	<script src="js/libs/phaser.min.js"></script>
+	<script src="libs/phaser/build/phaser.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 
 	<script src="js/Game/Boot.js"></script>
@@ -25,7 +27,95 @@
 </head>
 <body>
 
-	<div id="game-phaser"></div>
+    <div id="datosUsuario" class="container">
+        <div role="form">
+            <div class="form-group">
+                <label for="txtUsuario">Nombre de Usuario</label>
+                <input id="txtUsuario" class="form-control"  type="text">
+            </div>
+        </div>
+
+        <div role="form">
+            <div class="form-group">
+                <button class="btn-primary btn-block" data-toggle="modal" data-target="#myModal">
+                    Crear juego
+                </button>
+            </div>
+        </div>
+
+        <div role="form">
+            <div class="form-group">
+                <label for="listGames">Lista de juegos</label>
+                <ul id="listGames" class="list-group">
+                </ul>    
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Crear Nuevo Juegos</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="nombreJuego" 
+                            placeholder="Nombre del juego" 
+                            ng-model="nameProduc">
+                    </div>
+                    <div class="form-group">
+                        <input 
+                            type="number" 
+                            class="form-control" 
+                            id="numeroPlayers" 
+                            placeholder="Numero de juegadores" 
+                            ng-model="nameProduc">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnCreateGame" type="button" class="btn btn-success" data-dismiss="modal" >
+                        Crear
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- loading -->
+    <div class="modal fade" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Esperando jugadores</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="progress progress-striped active">
+                        <div
+                            class="progress-bar" 
+                            role="progressbar"
+                            aria-valuenow="70"
+                            aria-valuemin="0" 
+                            aria-valuemax="100" 
+                            style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+	<div id="game-phaser" style="display:none;"></div>
 
 <script>
 

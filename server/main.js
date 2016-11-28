@@ -29,11 +29,11 @@ app.get('/game', function(req, res){
         .where(function(x){ return x.status == 'waiting'} )
         .select(function(x){ return x}).toArray();
     console.log("GET /game");
-    res.send(games);
+    return res.status(200).send(games);
 });
 
 app.post('/game', function(req, res){
-    console.log('juegador a creado nuevo juego: ' + req.body.nameGame);
+    console.log('jugador a creado nuevo juego: ' + req.body.nameGame);
     var game = {
         id: NO_GAMES,
         nameGame: req.body.nameGame,
@@ -43,7 +43,7 @@ app.post('/game', function(req, res){
     }
     GAMES.push(game);
     NO_GAMES += 1;
-    res.send(game);
+    return res.status(200).send(game);
 });
 
 io.on("connection", function(socket){
@@ -53,7 +53,6 @@ io.on("connection", function(socket){
         if (GAMES[req.idGame].players.length >= GAMES[req.idGame].noPlayers + 1 ){
             socket.join(req.nameGame);
             GAMES[req.idGame].players[GAMES[req.idGame].noPlayers].id = req.idPlayer;
-            //socket.emit("setID", GAMES[game.id].noPlayers);
 
             if (GAMES[req.idGame].players.length == GAMES[req.idGame].noPlayers + 1 ){
 
@@ -86,6 +85,11 @@ io.on("connection", function(socket){
                 return false;
         }).info = req.info;
         io.to(req.nameGame).emit('infoPlayers', GAMES[req.idGame].players);
+    });
+
+
+    socket.on('onWin', function(req){
+        io.to(req.nameGame).emit('onWin', req.player);
     });
 
     

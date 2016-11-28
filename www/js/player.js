@@ -1,6 +1,6 @@
 
 
-var player = {
+var Player = {
 
     MAX_VELOCITY: 5,
     _velocity: 0,
@@ -8,63 +8,64 @@ var player = {
     _factorVelocity_Y: 0,
 
     init: function(){
-        player.auto.init();
+        Player.auto.init();
     },
 
     resetVelocity: function(){
-        player._velocity = 0;
-        player.auto.setVelocityY(0);
+        Player._velocity = 0;
+        Player.auto.setVelocityY(0);
     },
     // incrementa velocidad
     incVelocity: function(){
-        if (player._velocity != "disabled" && player._velocity < player.MAX_VELOCITY){
-            player._velocity += 1;
-            player.auto.setVelocityY(-1 * player._velocity * player._factorVelocity_Y);
+        if (Player._velocity != "disabled" && Player._velocity < Player.MAX_VELOCITY){
+            Player._velocity += 1;
+            Player.auto.setVelocityY(-1 * Player._velocity * Player._factorVelocity_Y);
         }
     },
     // decrementa velocidad
     decVelocity: function(){
-        if (player._velocity != "disabled" && player._velocity >= 0){
-            player._velocity -= 1;
-            player.auto.setVelocityY(-1 * player._velocity * player._factorVelocity_Y);
+        if (Player._velocity != "disabled" && Player._velocity >= 0){
+            Player._velocity -= 1;
+            Player.auto.setVelocityY(-1 * Player._velocity * Player._factorVelocity_Y);
         }
     },
     // movimiento izquierda
     moveLeft: function(){
-        player.auto.setVelocityX(-player._factorVelocity_X);
+        Player.auto.setVelocityX(-Player._factorVelocity_X);
     },
     // movimiento derecha
     moveRight: function(){
-        player.auto.setVelocityX(player._factorVelocity_X);
+        Player.auto.setVelocityX(Player._factorVelocity_X);
     },
     // detine movimiento en x
     xNotMove: function(){
-        player.auto.setVelocityX(0);
+        Player.auto.setVelocityX(0);
     },
     // establece el factor de felcidad, variable para cada dispositivo
     setFactorVelocity: function(x, y){
-        player._factorVelocity_X = x;
-        player._factorVelocity_Y = y;
+        Player._factorVelocity_X = Math.round(x);
+        Player._factorVelocity_Y = Math.round(y);
+    },
+    // le indica al servidor que este jugador ha ganado
+    sendWin: function(){
+        var data = {
+            nameGame: escenario.game.nameGame,
+            player: Player.auto.id,
+        };
+        server.socket.emit("onWin", data);
     },
 
     disabledVelocity: function(){
-        player._velocity = "disabled";
+        Player._velocity = "disabled";
     },
     // se une al juego establecido en escenario.game, y obitiene el id para esta jugador
     connect: function(onFinish) {
         var data = {
             idGame: escenario.game.id,
             nameGame: escenario.game.nameGame,
-            idPlayer: player.auto.id,
+            idPlayer: Player.auto.id,
         }
         server.socket.emit("joinPlayerInGame", data);
-        // server.socket.on("setID", function(idAuto){
-        //     player.init(idAuto);
-        //     if (onFinish)
-        //         onFinish();
-        //     else
-        //         console.log("se ha unido al juego correctamente su id es: " + idAuto); 
-        // });
     },
 
 
@@ -80,7 +81,7 @@ var player = {
         },
 
         init: function(){
-            player.auto.id = "player_" + Math.round(Math.random() * 10000); // este dato es temporal, vendra de la interfaz
+            Player.auto.id = "player_" + Math.round(Math.random() * 10000); // este dato es temporal, vendra de la interfaz
         },
 
         getVelocityX: function(){
@@ -104,25 +105,25 @@ var player = {
         },
 
         setVelocityX: function(x){
-            player.auto.info.velocityX = x;
+            Player.auto.info.velocityX = x;
             //escenario.game.players[player.auto.id].velocityX = x;
             if (escenario.isMultiplayer)
-                player.auto._sendMove();
+                Player.auto._sendMove();
         },
 
         setVelocityY: function(y){
-            player.auto.info.velocityY = y;
+            Player.auto.info.velocityY = y;
             //escenario.game.players[player.auto.id].velocityY = y;
             if (escenario.isMultiplayer)
-                player.auto._sendMove();
+                Player.auto._sendMove();
         },
 
         _sendMove: function(){
             var data = {
                 idGame: escenario.game.id,
-                idPlayer: player.auto.id,
+                idPlayer: Player.auto.id,
                 //info: escenario.game.players[player.auto.id],
-                info: player.auto.info,
+                info: Player.auto.info,
                 nameGame: escenario.game.nameGame,
             };
             server.socket.emit("infoPlayer", data);

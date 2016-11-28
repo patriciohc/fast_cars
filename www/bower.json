@@ -1,0 +1,23 @@
+{
+  "name": "fast-cars",
+  "homepage": "https://github.com/patriciohc/fast_cars",
+  "authors": [
+    "patricio <patriciohc.0@gmail.com>"
+  ],
+  "description": "juego de carreras multiplayer online",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.1",
+    "phaser": "^2.6.2",
+    "bootstrap": "^3.3.7"
+  }
+}
