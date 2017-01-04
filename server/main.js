@@ -1,18 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var methodOverride = require("method-override");
-//var LINQ = require('linq');  
+//var LINQ = require('linq');
 
 
 var app = express();
 // Middlewares
-app.use(bodyParser.urlencoded({ extended: false })); 
-app.use(bodyParser.json()); 
 app.use(methodOverride());
 
-var router = express.Router();
-
-app.use(router);
 
 var server = require("http").Server(app);
 
@@ -41,9 +36,9 @@ io.on("connection", function(socket){
                     roadLength: roadLength,
                 };
 
-                io.to(req.nameGame).emit('setEscenario', data);           
+                io.to(req.nameGame).emit('setEscenario', data);
                 GAMES[req.idGame].status = 'running';
-                io.to(req.nameGame).emit('startGame', GAMES[req.idGame]);               
+                io.to(req.nameGame).emit('startGame', GAMES[req.idGame]);
             } else {
                 GAMES[req.idGame].noPlayers += 1;
             }
@@ -58,7 +53,7 @@ io.on("connection", function(socket){
         GAMES[req.idGame].players.find(function(item){
             if (item.id == req.idPlayer)
                 return true;
-            else 
+            else
                 return false;
         }).info = req.info;
         io.to(req.nameGame).emit('infoPlayers', GAMES[req.idGame].players);
@@ -69,7 +64,7 @@ io.on("connection", function(socket){
         io.to(req.nameGame).emit('onWin', req.player);
     });
 
-    
+
 });
 
 
@@ -103,7 +98,7 @@ function getObstaculos (nObstaculos, minX, maxX, minY, maxY){
     for (var i = 0; i < nObstaculos; i++) {
         var element = {};
         element.x = Math.floor((Math.random() * maxX) + minX);
-        element.y = Math.floor((Math.random() * maxY) + minY); 
+        element.y = Math.floor((Math.random() * maxY) + minY);
         element.v = -Math.floor((Math.random() * 400) + 50); // velocidad
         element.t = Math.ceil(Math.random() * 3); // tipo de carro
         obstaculos.push( element );
