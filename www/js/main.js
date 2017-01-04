@@ -3,6 +3,7 @@
 var main = {
 
     _games: null,
+    user: null,
 
     init: function(){
         server.init(); // inicializa la conexion con el servidor
@@ -17,22 +18,70 @@ var main = {
         main.getGames();
     },
 
+    entrar: function() {
+        var user = {
+            userName: $("#txtUsuario").val(),
+            isGuest: true
+        }
+        server.post('/api/user', user, function(user){
+            main.user = user;
+            $("#lbUser").html(user.userName);
+            $("#inicio").hide();
+            $("#datosUsuario").show();
+        });
+    },
+
+    login: function(){
+
+    },
+
+    register: function() {
+
+    },
+
     // crea nuevo game
     createGame: function(){
 
+        var validarForm = function() {
+
+            if (!$("#nombreJuego").val() || !$("#numeroPlayers").val()){
+                alert("Ingrese nombre del juego y numero de jugadores");
+                return false;
+            }
+            var n = parseInt($("#numeroPlayers").val());
+            if (isNaN(n)){
+                alert("Indique el numero de jugadores");
+                return false; 
+            }
+            if (n > 4 || n < 2){
+                alert("El numero de jugadores debe ser de minimo 2 y maximo 4");
+                return false;
+            }
+
+            return true;
+        }
+
+        if (!validarForm()) return;
+
         var nameGame = $("#nombreJuego").val();
-        var noPlyers = $("#numeroPlayers").val();
+        var noPlyers = parseInt($("#numeroPlayers").val());
+
+        $("#nombreJuego").val("");
+        $("#numeroPlayers").val("");
+
 
         escenario.createGame(nameGame, noPlyers, function(game){
             tools.message("se ha creado juego: " + nameGame);
-            main.getGames();
-            main.joinAtGame(game.id);
+            var setGame = function(){
+                main.joinAtGame(game.id);
+            }
+            main.getGames(setGame);
         });
 
     },
 
     // obtiene los games disponibles
-    getGames: function(){
+    getGames: function(success){
         server.get("/game", {}, function(games){
             main._games = games;
             var lista = document.getElementById("listGames");
@@ -48,21 +97,19 @@ var main = {
                 lista.appendChild(li);
             }
 
-            // codigo temporal
-            //if (!main._games || main._games.length == 0) { // si no hay juego crea uno 
-            //    main.createGame();
-            //    main.getGames();
-            //} else {
-            //    main.joinAtGame();
-            //} // termina codigo temporal
-
-
+            if (success)
+                success();
         });
 
     },
 
     joinAtGame: function(id){
-        var indexGame = id || this.idGame;
+        var indexGame;
+        if (!isNaN(id))
+            indexGame = id;
+        else 
+            indexGame =this.idGame;
+
         escenario.setGame(main._games[indexGame]);
         $("#pleaseWaitDialog").modal();
         Player.connect();

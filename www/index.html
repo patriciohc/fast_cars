@@ -2,6 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<title>Cyber Orb demo</title>
 	<link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
 <!--	<style> body { margin: 0; background: #2B2E31 url(img/screen-bg.png) repeat; } </style>-->
@@ -26,30 +27,64 @@
 
 </head>
 <body>
+    <!-- inicio -->
+    <div id="inicio" class="container">
+        <div class="row">
+            <div class="col-md-12" style="height: 100%; padding-top: 50%;">
+                <div role="form">
+                    <div class="form-group">
+                        <label for="txtUsuario">Nombre de Usuario</label>
+                        <input id="txtUsuario" class="form-control"  type="text">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-lg btn-block" onclick="main.entrar()">
+                            Entrar
+                        </button>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6" style="text-align: center;">
+                            <a>Acceder</a>
+                        </div>
+                        <div class="col-xs-6" style="text-align: center;">
+                            <a>Registrarse</a>
+                        </div>
+                    </div>
+                </div>             
+            </div>
+        </div>
+    </div>
 
-    <div id="datosUsuario" class="container">
-        <div role="form">
-            <div class="form-group">
-                <label for="txtUsuario">Nombre de Usuario</label>
-                <input id="txtUsuario" class="form-control"  type="text">
+    <!-- lista de juegos  -->
+    <div id="datosUsuario" style="display: none;">
+        <nav class="navbar navbar-dark">
+            <a class="navbar-brand" href="#">Fixed bottom</a>
+            <form class="form-inline float-lg-right">
+      <button class="btn btn-outline-success" type="submit">Salir</button>
+    </form>
+        </nav>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div role="form">
+                        <div id="lbUser" class="pull-right"></div>
+                        <div class="form-group">
+                            <label for="listGames">Lista de juegos</label>
+                            <ul id="listGames" class="list-group">
+                            </ul>    
+                        </div>
+                    
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#myModal">
+                                Crear juego
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div role="form">
-            <div class="form-group">
-                <button class="btn-primary btn-block" data-toggle="modal" data-target="#myModal">
-                    Crear juego
-                </button>
-            </div>
-        </div>
-
-        <div role="form">
-            <div class="form-group">
-                <label for="listGames">Lista de juegos</label>
-                <ul id="listGames" class="list-group">
-                </ul>    
-            </div>
-        </div>
     </div>
 
     <!-- Modal -->
@@ -73,6 +108,7 @@
                     <div class="form-group">
                         <input 
                             type="number" 
+                            min="2" max="4"
                             class="form-control" 
                             id="numeroPlayers" 
                             placeholder="Numero de juegadores" 

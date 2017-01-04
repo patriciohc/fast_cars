@@ -15,12 +15,14 @@ var server = {
     post: function(urlRel, parametros, successFunction){
         var url = server.ip + ":" + server.port + urlRel;
         var setting = tools.getDefaultConfigAjax(url, 'POST', parametros);
+        console.log("POST: " + url);
         $.ajax(setting).done(successFunction).fail(tools.genericFunctionError);
     },
 
     get: function(urlRel, parametros, successFunction){
         var url = server.ip + ":" + server.port + urlRel;
         var setting = tools.getDefaultConfigAjax(url, 'GET', parametros);
+        console.log("GET: " + url);
         $.ajax(setting).done(successFunction).fail(tools.genericFunctionError);
     },
 

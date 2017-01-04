@@ -1,8 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var methodOverride = require("method-override");
-//var mongoose = require('mongoose');
-var LINQ = require('linq');  
+//var LINQ = require('linq');  
 
 
 var app = express();
@@ -21,30 +20,8 @@ app.use(express.static("www"));
 
 var io = require("socket.io")(server);
 
-var NO_GAMES = 0;
-var GAMES = [];
-
-app.get('/game', function(req, res){
-    var games = LINQ.from(GAMES)
-        .where(function(x){ return x.status == 'waiting'} )
-        .select(function(x){ return x}).toArray();
-    console.log("GET /game");
-    return res.status(200).send(games);
-});
-
-app.post('/game', function(req, res){
-    console.log('jugador a creado nuevo juego: ' + req.body.nameGame);
-    var game = {
-        id: NO_GAMES,
-        nameGame: req.body.nameGame,
-        noPlayers: 0, // numero de jugadores actuales
-        players: initPlayers(req.body.noPlayers), // numero de jugadores para el juego
-        status: 'waiting', // puede tomar los siguientes valores: running, waiting, finished 
-    }
-    GAMES.push(game);
-    NO_GAMES += 1;
-    return res.status(200).send(game);
-});
+//var NO_GAMES = 0;
+//var GAMES = [];
 
 io.on("connection", function(socket){
 
