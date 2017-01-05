@@ -2,7 +2,7 @@
 const Sequelize = require("sequelize");
 const dataBase = require('./conectionDB');
 
-var User = dataBase.define('user', 
+var User = dataBase.define('user',
     {
         userName: {
             type: Sequelize.STRING,
@@ -19,7 +19,7 @@ var User = dataBase.define('user',
         freezeTableName: true // Model tableName will be the same as the model name
 });
 
-var Game = dataBase.define('game', 
+var Game = dataBase.define('game',
     {
         nameGame: {
             type: Sequelize.STRING,
@@ -37,14 +37,14 @@ var Game = dataBase.define('game',
     }, {
         freezeTableName: true // Model tableName will be the same as the model name
 });
-Game.hasMany(User, {as: 'players', foreignKey: 'gameId'});
-User.belongsTo(Game, {foreignKey: 'gameId'});
+Game.hasMany(User);
+User.belongsTo(Game);
 
-User.sync({force: true}).then(function (res) {
+User.sync({force: true}).then( res => {
     console.log(res);
 });
 
-Game.sync({force: true}).then(function (res) {
+Game.sync({force: true}).then( res => {
     console.log(res);
 });
 

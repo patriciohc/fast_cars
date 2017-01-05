@@ -3,14 +3,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 //const methodOverride = require("method-override");
-const controllerWs = require('./controllerWs');
 
 const app = express();
 //app.use(methodOverride());
 // websockets
 var server = require("http").Server(app);
 var io = require("socket.io")(server);
-io.on("connection", controllerWs.connect);
+require('./controllerWs')(io);
 
 const api = require('./routers');
 

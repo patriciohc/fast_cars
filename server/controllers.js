@@ -17,11 +17,13 @@ function createUSer(req, res) {
     var userName = req.body.userName;
     var isGuest = req.body.isGuest;
 
-    models.User.create({ userName: userName, isGuest: isGuest}).then(function(user){
-        return res.status(200).send(user);
+    models.User.sync({force: true}).then( ress => {
+        models.User.create({ userName: userName, isGuest: isGuest}).then(function(user){
+            return res.status(200).send(user);
+        });
     });
 }
-// sale player de juego 
+// sale player de juego
 function exitUser(req, res) {
     var idGame = req.body.idGame;
     var idPlayer = req.body.idPlayer;
@@ -53,7 +55,9 @@ function getGames(req, res){
     })
     .then(function(games){
         return res.status(200).send(games);
-    });    
+    });
+
+
 }
 
 function createGame(req, res) {
@@ -62,11 +66,13 @@ function createGame(req, res) {
         noPlayers: req.body.noPlayers, // numero de jugadores actuales
         //players: initPlayers(req.body.noPlayers), // numero de jugadores para el juego
         //players: null, // numero de jugadores para el juego
-        status: 'waiting', // puede tomar los siguientes valores: running, waiting, finished 
+        status: 'waiting', // puede tomar los siguientes valores: running, waiting, finished
     }
- 
-    models.Game.create(game).then(function(game){
-        return res.status(200).send(game);
+
+    models.Game.sync({force: true}).then( ress => {
+        models.Game.create(game).then(function(game){
+            return res.status(200).send(game);
+        });
     });
 }
 

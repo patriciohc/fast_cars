@@ -2,15 +2,29 @@
 
 const models = require('./models');
 
+var io;
+
 function joinPlayerInGame(req){
     var idGame = req.idGame;
+    var idPlayer = req.idPlayer;
 
-    models.Game.findAll({
-        where: {id: idGame},
+    models.User.update({idGame: idGame}, {where: {id: idPlayer}})
+    .then(result=>{
+        console.log("actualizado.. "+ result);
+    })
+    .catch(err=>{
+        console.log("error" + err);
+    });
+
+    models.Game.findOne({
+        where: {id:idGame},
         include: [models.User]
-    }).then(function(games) {
-        console.log(games);
-        return res.status(200).send(games);
+    }).then((game) => {
+        console.log(game);
+        if (game)
+            console.log(game.users.length);
+        //if ()
+        //return res.status(200).send(games);
     });
 
     /*if (GAMES[req.idGame].players.length >= GAMES[req.idGame].noPlayers + 1 ){
@@ -65,6 +79,7 @@ function connect(ws) {
     ws.on('onWin', onWin);
 }
 
-module.exports = {
-    connect,
+module.exports = function(sockeIO){
+    io = sockeIO;
+    io.on("connection", connect);
 }
