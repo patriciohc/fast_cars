@@ -1,6 +1,6 @@
 'use strict'
 const Sequelize = require("sequelize");
-const dataBase = require('./conection');
+const dataBase = require('./conectionDB');
 
 var User = dataBase.define('user', 
     {
@@ -23,7 +23,6 @@ var Game = dataBase.define('game',
     {
         nameGame: {
             type: Sequelize.STRING,
-            field: 'Nombre de uuario' // Will result in an attribute that is firstName when user facing but first_name in the database
         },
         noPlayers: {
             type: Sequelize.INTEGER
@@ -38,7 +37,8 @@ var Game = dataBase.define('game',
     }, {
         freezeTableName: true // Model tableName will be the same as the model name
 });
-Game.hasMany(User, {as: 'players'})
+Game.hasMany(User, {as: 'players', foreignKey: 'gameId'});
+User.belongsTo(Game, {foreignKey: 'gameId'});
 
 User.sync({force: true}).then(function (res) {
     console.log(res);

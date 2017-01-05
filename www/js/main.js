@@ -82,7 +82,7 @@ var main = {
 
     // obtiene los games disponibles
     getGames: function(success){
-        server.get("/game", {}, function(games){
+        server.get("/api/game", {}, function(games){
             main._games = games;
             var lista = document.getElementById("listGames");
             lista.innerHTML = "";

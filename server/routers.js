@@ -15,4 +15,4 @@ api.post('/game', controllers.createGame);
 api.put('/game', controllers.exitUser);
 //api.get('/cat-atributo/:id', catProductoCtrl.getCatProducto);
 
-module.exports = api
+module.exports = api;

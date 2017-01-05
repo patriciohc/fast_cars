@@ -3,7 +3,7 @@
 var server = {
 
     //ip: "localhost",
-    ip: "192.168.1.92",
+    ip: "192.168.0.11",
     port: "8080",
     socket: null,
 

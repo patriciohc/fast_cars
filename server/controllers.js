@@ -4,9 +4,7 @@ const models = require('./models');
 
 // funciones User
 function getUsers(req, res){
-    models.User.findAll({
-        //attributes: ['foo', 'bar']
-    }).then(function(users){
+    models.User.findAll({}).then(function(users){
         return res.status(200).send(users);
     });
 }
