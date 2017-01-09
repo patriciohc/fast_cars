@@ -17,10 +17,8 @@ function createUSer(req, res) {
     var userName = req.body.userName;
     var isGuest = req.body.isGuest;
 
-    models.User.sync({force: true}).then( ress => {
-        models.User.create({ userName: userName, isGuest: isGuest}).then(function(user){
-            return res.status(200).send(user);
-        });
+    models.User.create({ userName: userName, isGuest: isGuest}).then(function(user){
+        return res.status(200).send(user);
     });
 }
 // sale player de juego
@@ -69,11 +67,14 @@ function createGame(req, res) {
         status: 'waiting', // puede tomar los siguientes valores: running, waiting, finished
     }
 
-    models.Game.sync({force: true}).then( ress => {
-        models.Game.create(game).then(function(game){
-            return res.status(200).send(game);
-        });
+    models.Game.create(game).then(function(game){
+        console.log("creando game... ")
+        return res.status(200).send(game);
     });
+
+    /*models.Game.sync({force: true}).then( ress => {
+        //console.log(res);
+    });*/
 }
 
 function addPlayerToGame(req, res) {

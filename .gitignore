@@ -5,4 +5,4 @@ hooks/
 node_modules/
 platforms/
 plugins/
-database.sqlite
+./database.sqlite
