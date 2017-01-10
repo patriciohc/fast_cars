@@ -3,8 +3,9 @@
 const models = require('./models');
 
 var io;
+var socket;
 
-function joinPlayerInGame(socket){
+function joinPlayerInGame(req){
     var idGame = req.idGame;
     var idPlayer = req.idPlayer;
     models.User.update({gameId: idGame}, {where: {id: idPlayer}})
@@ -23,24 +24,22 @@ function joinPlayerInGame(socket){
         var noPlayersAct = game.user.length; // numero de jugadores actuales
         var noPlayers = game.players; // numero de jugadores permitidos
         if (noPlayersAct >= noPlayers){
-            socket.join(game.nameGame);
+            socket.join(game.id);
             if (noPlayersAct == noPlayers){
                 var data = {
                     carsNoPlayers: getObstaculos(20, 80, 200, 1000, roadLength+100), // autos que no jugan
                     obstaculos: getObstaculos(20, 80, 200, 1000, roadLength+100), // obstaculos
                     roadLength: 50000, // tamño de la carretera
                 };
-                io.to(game.nameGame).emit('setEscenario', data);
+                io.to(game.id).emit('setEscenario', data);
                 var ids = game.user.map(item => {
                     return item.id;
                 });
                 var dataPlayers = initPlayers(ids);
                 game.status = 'running';
-                io.to(game.nameGame).emit('startGame', dataPlayers);
+                io.to(game.id).emit('setDataPlayers', dataPlayers);
             }
         }
-        //if ()
-        //return res.status(200).send(games);
     });
 
     /*if (GAMES[req.idGame].players.length >= GAMES[req.idGame].noPlayers + 1 ){
@@ -60,7 +59,13 @@ function joinPlayerInGame(socket){
 
 function infoPlayer(req) {
         //console.log("web sockec conectado...");
-        var idGame = req.
+        var idGame = req.idGame;
+        var data = {
+            idPlayer: req.idPlayer,
+            info; req.info,
+        }
+        io.to(idGame).emit('infoPlayers', data);
+
         //GAMES[req.idGame].players[req.idPlayer] = req.info;
         /*GAMES[req.idGame].players.find(function(item){
             if (item.id == req.idPlayer)
@@ -75,14 +80,15 @@ function onWin(req){
     io.to(req.nameGame).emit('onWin', req.player);
 }
 
-function connect(ws) {
+function connect(sk) {
     console.log("web sockec conectado...");
-        // jugador se unira a una partida
-    ws.on('joinPlayerInGame', joinPlayerInGame);
+    socket = sk;
+    // jugador se unira a una partida
+    socket.on('joinPlayerInGame', joinPlayerInGame);
 
-    ws.on('infoPlayer', infoPlayer);
+    socket.on('infoPlayer', infoPlayer);
 
-    ws.on('onWin', onWin);
+    socket.on('onWin', onWin);
 }
 
 module.exports = function(sockeIO){
@@ -93,20 +99,16 @@ module.exports = function(sockeIO){
 
 function initPlayers(ids){
 
-    var getConfigAuto = function (id) {
+    var getConfigAuto = function () {
         return {
-            id: id,
-            info: {
-                point: {x:0, y:0},
-                velocityX: 0,
-                velocityY: 0,
-            }
+            point: {x:0, y:0},
+            velocityX: 0,
+            velocityY: 0,
         }
     }
-
-    var players = []
+    var players = {};
     for (var i = 0; i < ids.lenght; i++) {
-        players.push(getConfigAuto(ids[i]));
+        players[ids[i]] = getConfigAuto();
     }
     return players;
 }
