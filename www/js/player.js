@@ -7,8 +7,8 @@ var Player = {
     _factorVelocity_X: 0,
     _factorVelocity_Y: 0,
 
-    init: function(){
-        Player.auto.init();
+    init: function(player){
+        Player.auto.init(player.id);
     },
 
     resetVelocity: function(){
@@ -62,7 +62,7 @@ var Player = {
     connect: function(onFinish) {
         var data = {
             idGame: escenario.game.id,
-            nameGame: escenario.game.nameGame,
+            //nameGame: escenario.game.nameGame,
             idPlayer: Player.auto.id,
         }
         server.socket.emit("joinPlayerInGame", data);
@@ -80,8 +80,8 @@ var Player = {
             velocityY: 0,
         },
 
-        init: function(){
-            Player.auto.id = "player_" + Math.round(Math.random() * 10000); // este dato es temporal, vendra de la interfaz
+        init: function(id){
+            Player.auto.id = id;
         },
 
         getVelocityX: function(){

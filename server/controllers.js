@@ -62,19 +62,12 @@ function createGame(req, res) {
     var game = {
         nameGame: req.body.nameGame,
         noPlayers: req.body.noPlayers, // numero de jugadores actuales
-        //players: initPlayers(req.body.noPlayers), // numero de jugadores para el juego
-        //players: null, // numero de jugadores para el juego
         status: 'waiting', // puede tomar los siguientes valores: running, waiting, finished
     }
 
     models.Game.create(game).then(function(game){
-        console.log("creando game... ")
         return res.status(200).send(game);
     });
-
-    /*models.Game.sync({force: true}).then( ress => {
-        //console.log(res);
-    });*/
 }
 
 function addPlayerToGame(req, res) {

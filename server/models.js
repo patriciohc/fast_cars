@@ -40,13 +40,13 @@ var Game = dataBase.define('game',
 Game.hasMany(User);
 User.belongsTo(Game);
 
-/*User.sync({force: true}).then( res => {
+User.sync({force: true}).then( res => {
     console.log(res);
 });
 
 Game.sync({force: true}).then( res => {
     console.log(res);
-});*/
+});
 
 module.exports = {
     User,

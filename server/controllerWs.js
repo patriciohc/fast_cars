@@ -4,6 +4,7 @@ const models = require('./models');
 
 var io;
 var socket;
+var countersReady = {};
 
 function joinPlayerInGame(req){
     var idGame = req.idGame;
@@ -20,12 +21,12 @@ function joinPlayerInGame(req){
         //console.log(game);
         if (!game)
             return;
-        console.log("Numbers players " + game.users.length);
-        var noPlayersAct = game.user.length; // numero de jugadores actuales
+        console.log("Numbers players: " + game.users.length);
+        var noPlayersAct = game.users.length; // numero de jugadores actuales
         var noPlayers = game.players; // numero de jugadores permitidos
         if (noPlayersAct >= noPlayers){
             socket.join(game.id);
-            if (noPlayersAct == noPlayers){
+            if (noPlayersAct == noPlayers) {
                 var data = {
                     carsNoPlayers: getObstaculos(20, 80, 200, 1000, roadLength+100), // autos que no jugan
                     obstaculos: getObstaculos(20, 80, 200, 1000, roadLength+100), // obstaculos
@@ -37,7 +38,7 @@ function joinPlayerInGame(req){
                 });
                 var dataPlayers = initPlayers(ids);
                 game.status = 'running';
-                io.to(game.id).emit('setDataPlayers', dataPlayers);
+                io.to(game.id).emit('playersComplete', dataPlayers);
             }
         }
     });
@@ -57,12 +58,26 @@ function joinPlayerInGame(req){
     }*/
 }
 
+function playerReady(req) {
+    models.Game.findById(req.idGame, function (){
+        if (!countersReady[req.idGame]){
+            countersReady[req.idGame] = 0;
+        } else {
+            countersReady[req.idGame] += 1
+        }
+        if (game.noPlayers == countersReady[req.idGame]) {
+            delete countersReady[req.idGame];
+            io.to(game.id).emit('startGame', dataPlayers);
+        }
+    });
+}
+
 function infoPlayer(req) {
         //console.log("web sockec conectado...");
         var idGame = req.idGame;
         var data = {
             idPlayer: req.idPlayer,
-            info; req.info,
+            info: req.info,
         }
         io.to(idGame).emit('infoPlayers', data);
 
@@ -80,18 +95,28 @@ function onWin(req){
     io.to(req.nameGame).emit('onWin', req.player);
 }
 
+function exitGame(req){
+    
+}
+
 function connect(sk) {
     console.log("web sockec conectado...");
     socket = sk;
     // jugador se unira a una partida
     socket.on('joinPlayerInGame', joinPlayerInGame);
 
+    socket.on('playerReady', playerReady);
+
     socket.on('infoPlayer', infoPlayer);
 
     socket.on('onWin', onWin);
+
+    socket.on('newGame', () => {io.emit('newGame')});
+
+    socket.on('exitGame', () => {io.emit('newGame')});
 }
 
-module.exports = function(sockeIO){
+module.exports = function(sockeIO) {
     io = sockeIO;
     io.on("connection", connect);
 }

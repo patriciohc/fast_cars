@@ -5,30 +5,23 @@ var escenario = {
     carsNoPlayers: null,
     obstaculos: null,
     isMultiplayer: null,
+    players: null,
 
     init: function(isMultiplayer = false) {
         escenario.isMultiplayer = isMultiplayer;
         server.socket.on('setEscenario', escenario.setEscenario);
+        server.socket.on('playersComplete', escenario.setPlayers);
         server.socket.on('infoPlayers', escenario.setInfoPlayers);
         server.socket.on('onWin', escenario.onWin);
-    },
-    // nameGame: nombre del juego
-    // noPlayers: numero de jugadores
-    // onFinish: funcion que se ejecuta cuando se ha creado el juego 
-    createGame: function(nameGame, noPlayers, onFinish){
-
-        var setConfigGame = function(request){
-            escenario.game = request;
-            if (onFinish)
-                onFinish(request);
-            else
-                console.log("se ha creado un nuevo juego..."); 
-        }
-        server.post('/game', {nameGame: nameGame, noPlayers: noPlayers}, setConfigGame);
     },
 
     setGame: function(game){
         escenario.game = game;
+    },
+
+    setPlayers: function(players){
+        escenario.players = players;
+        server.socket.emit("playerReady", {idPlayer: Player.auto.id, idGame:escenario.game.id});
     },
 
     setInfoPlayers: function(data){
