@@ -88,15 +88,33 @@ function infoPlayer(req) {
             else
                 return false;
         }).info = req.info;
-        io.to(req.nameGame).emit('infoPlayers', GAMES[req.idGame].players);*/
+        io.to(req.nameGame).emit('infoPlayers', GAMES    models.User.findOne({where:{id:req.idPlayer}, user =>{
+
+    });[req.idGame].players);*/
 }
 
 function onWin(req){
     io.to(req.nameGame).emit('onWin', req.player);
 }
 
-function exitGame(req){
-    
+function cancelJoin(req){
+    console.log("salir de juego");
+    models.User.update({gameId: null}, {where: {id: idPlayer}})
+    .catch(err => {
+        console.log("error: "+ err);
+    });
+
+    models.Game.findOne({
+        where: {id:req.idGame},
+        include: [models.User]
+    }).then( game => {
+        console.log(game);
+        if(game.users.lenght == 0){
+            game.destroy();
+            io.emit('newGame');
+            return;
+        }
+    });
 }
 
 function connect(sk) {
@@ -113,7 +131,7 @@ function connect(sk) {
 
     socket.on('newGame', () => {io.emit('newGame')});
 
-    socket.on('exitGame', () => {io.emit('newGame')});
+    socket.on('cancelJoin', cancelJoin);
 }
 
 module.exports = function(sockeIO) {

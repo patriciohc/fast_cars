@@ -14,6 +14,8 @@ var main = {
 
         var btnCreteGame = document.getElementById("btnCreateGame");
         btnCreteGame.onclick = main.createGame;
+        var btnCancelJoin = document.getElementById("btnCancelJoin");
+        btnCancelJoin.onclick = main.cancelJoin;
 
         //main.startGame(null);
         main.getGames();
@@ -33,8 +35,8 @@ var main = {
         });
     },
 
-    salirDelJuego: function(){
-        server.socket.emit("exitGame", {idPlayer: Player.auto.id, idGame: escenario.game.id});
+    cancelJoin: function(){
+        server.socket.emit("cancelJoin", {idPlayer: Player.auto.id, idGame: escenario.game.id});
     },
 
     login: function(){
@@ -57,7 +59,7 @@ var main = {
             var n = parseInt($("#numeroPlayers").val());
             if (isNaN(n)){
                 alert("Indique el numero de jugadores");
-                return false; 
+                return false;
             }
             if (n > 4 || n < 2){
                 alert("El numero de jugadores debe ser de minimo 2 y maximo 4");
