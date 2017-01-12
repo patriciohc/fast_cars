@@ -96,7 +96,7 @@ var main = {
     getGames: function(){
 
         var join = function (id) {
-            var indexGame =this.idGame;
+            var indexGame =this.indexGame;
             var game = main._games[indexGame];
             main.joinAtGame(game);
         };
@@ -109,7 +109,7 @@ var main = {
                 var item = main._games[i];
                 var li = document.createElement("li");
                 li.innerHTML = item.nameGame;
-                li.idGame = item.id;
+                li.indexGame = i;
                 li.className = "list-group-item";
                 li.style.cursor = "pointer";
                 li.onclick = join;

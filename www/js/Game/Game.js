@@ -46,7 +46,7 @@ Ball.Game.prototype = {
 		//this.levelText = this.game.add.text(120, 10, "Level: "+this.level+" / "+this.maxLevels, this.fontSmall);
 		//this.panel.add(this.levelText);
 
-		this.levelText = this.game.add.text(120, 10, "Lugar: "+ 0 +" / "+ escenario.game.players.length, this.fontSmall);
+		this.levelText = this.game.add.text(120, 10, "Lugar: "+ 0 +" / "+ escenario.game.noPlayers, this.fontSmall);
 		this.panel.add(this.levelText);
 
 		this.totalTimeText = this.game.add.text(120, 30, "Total time: "+this.totalTimer, this.fontSmall);

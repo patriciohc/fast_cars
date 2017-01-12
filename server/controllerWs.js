@@ -3,12 +3,13 @@
 const models = require('./models');
 
 var io;
-var socket;
+//var socket;
 var countersReady = {};
 
 function joinPlayerInGame(req){
     var idGame = req.idGame;
     var idPlayer = req.idPlayer;
+    var socket = this;
     models.User.update({gameId: idGame}, {where: {id: idPlayer}})
     .catch(err => {
         console.log("error: "+ error);
@@ -21,26 +22,31 @@ function joinPlayerInGame(req){
         //console.log(game);
         if (!game)
             return;
-        console.log("Numbers players: " + game.users.length);
+
         var noPlayersAct = game.users.length; // numero de jugadores actuales
-        var noPlayers = game.players; // numero de jugadores permitidos
-        if (noPlayersAct >= noPlayers){
-            socket.join(game.id);
-            if (noPlayersAct == noPlayers) {
-                var data = {
-                    carsNoPlayers: getObstaculos(20, 80, 200, 1000, roadLength+100), // autos que no jugan
-                    obstaculos: getObstaculos(20, 80, 200, 1000, roadLength+100), // obstaculos
-                    roadLength: 50000, // tamño de la carretera
-                };
-                io.to(game.id).emit('setEscenario', data);
-                var ids = game.user.map(item => {
-                    return item.id;
-                });
-                var dataPlayers = initPlayers(ids);
-                game.status = 'running';
-                io.to(game.id).emit('playersComplete', dataPlayers);
-            }
+        var noPlayers = game.noPlayers; // numero de jugadores permitidos
+        socket.join(idGame);
+        console.log("Game: " + game.id + " players:" + noPlayersAct + "/" +noPlayers);
+        if ( noPlayersAct < noPlayers ){
+            
+        } else {
+            console.log("players completos");
+            var data = {
+                roadLength: 50000, // tamño de la carretera
+            };
+            data.carsNoPlayers = getObstaculos(20, 80, 200, 1000, data.roadLength+100), // autos que no jugan
+            data.obstaculos = getObstaculos(20, 80, 200, 1000, data.roadLength+100), // obstaculos
+
+            io.to(idGame).emit('setEscenario', data);
+            var ids = game.users.map(item => {
+                return item.id;
+            });
+            var dataPlayers = initPlayers(ids);
+            game.status = 'running';
+            //game.save();
+            io.to(idGame).emit('playersComplete', dataPlayers);
         }
+
     });
 
     /*if (GAMES[req.idGame].players.length >= GAMES[req.idGame].noPlayers + 1 ){
@@ -59,15 +65,17 @@ function joinPlayerInGame(req){
 }
 
 function playerReady(req) {
-    models.Game.findById(req.idGame, function (){
-        if (!countersReady[req.idGame]){
-            countersReady[req.idGame] = 0;
+    var socket = this;
+    models.Game.findById(req.idGame).then( game => {
+        console.log("idGame: " + game.id + " - " + "numero de jugadores actuales: " + countersReady[req.idGame]);
+        if (!countersReady[req.idGame]) {
+            countersReady[req.idGame] = 1;
         } else {
             countersReady[req.idGame] += 1
         }
         if (game.noPlayers == countersReady[req.idGame]) {
             delete countersReady[req.idGame];
-            io.to(game.id).emit('startGame', dataPlayers);
+            io.to(game.id).emit('startGame');
         }
     });
 }
@@ -98,8 +106,9 @@ function onWin(req){
 }
 
 function cancelJoin(req){
+    var socket = this;
     console.log("salir de juego");
-    models.User.update({gameId: null}, {where: {id: idPlayer}})
+    models.User.update({gameId: null}, {where: {id: req.idPlayer}})
     .catch(err => {
         console.log("error: "+ err);
     });
@@ -108,8 +117,8 @@ function cancelJoin(req){
         where: {id:req.idGame},
         include: [models.User]
     }).then( game => {
-        console.log(game);
-        if(game.users.lenght == 0){
+        if(game.users.length == 0){
+            console.log("eliminando juego...");
             game.destroy();
             io.emit('newGame');
             return;
@@ -117,9 +126,8 @@ function cancelJoin(req){
     });
 }
 
-function connect(sk) {
+function connect(socket) {
     console.log("web sockec conectado...");
-    socket = sk;
     // jugador se unira a una partida
     socket.on('joinPlayerInGame', joinPlayerInGame);
 
