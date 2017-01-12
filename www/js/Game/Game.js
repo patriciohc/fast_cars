@@ -7,7 +7,7 @@ Ball.Game.prototype = {
 
 		this.add.sprite(0, 100, 'meta');
 		//this.add.sprite(0, 0, 'screen-bg');
-		
+
 		this.world.setBounds(0, 0, 320, this.roadLength);
 
 		this.physics.startSystem(Phaser.Physics.ARCADE);
@@ -56,14 +56,14 @@ Ball.Game.prototype = {
 		//this.timerText.fixedToCamera = true;
 		//this.timerText.cameraOffset.setTo(15, 15);
 
-		this.players = new Array(escenario.game.players.length);
+		this.players = new Array(escenario.game.noPlayers);
 
 		for (var i = 0; i < this.players.length; i++){
 			this.players[i] = {};
-			this.players[i].id = escenario.game.players[i].id;
+			this.players[i].id = escenario.players[i].id;
 			this.players[i].graphics = this.add.sprite(
-				(60 + Ball._WIDTH * 0.15 * i), 
-				(this.roadLength - 200), 
+				(60 + Ball._WIDTH * 0.15 * i),
+				(this.roadLength - 200),
 				'player-' + i
 			);
 			this.players[i].graphics.anchor.set(0.5);
@@ -100,7 +100,7 @@ Ball.Game.prototype = {
 				Player.incVelocity();
 				break;
 
-			case "ArrowDown": 
+			case "ArrowDown":
 				Player.decVelocity();
 				break;
 
@@ -108,7 +108,7 @@ Ball.Game.prototype = {
 				Player.xNotMove();
 				break;
 
-			case "ArrowRight":			
+			case "ArrowRight":
 				Player.xNotMove();
 				break;
 		}
@@ -166,7 +166,7 @@ Ball.Game.prototype = {
 		//if (player.auto.velocity != 0)
 		//	player.auto.velocityY -= 4; // incrementa velocidad miestras no choque
 		var v = Math.round10( Math.abs(Ball._player.body.velocity.y / 3), -1) // km/h
-		this.timerText.setText("Time: "+(this.timer)); // tiempo restante  
+		this.timerText.setText("Time: "+(this.timer)); // tiempo restante
 		this.totalTimeText.setText("Km/h: "+ v); // km/h
 	},
 
@@ -201,14 +201,14 @@ Ball.Game.prototype = {
 		for (var i in this.players){
 			var player = this.players[i];
 			var graphics = player.graphics;
-			
+
 			if (graphics === null)
 				continue;
 
 			var info = escenario.game.players.find(function(item){
 				if (item.id === player.id)
 					return true;
-				else 
+				else
 					return false;
 			}).info;
 
@@ -229,11 +229,11 @@ Ball.Game.prototype = {
 			}
 
 			// reubicamos el auto
-			// if (this.players[i].position.x > p.point.x + t || this.players[i].position.x < p.point.x - t || 
+			// if (this.players[i].position.x > p.point.x + t || this.players[i].position.x < p.point.x - t ||
 			// 	this.players[i].position.y > p.point.y + t || this.players[i].position.y < p.point.y - t ){
 			// 	this.players[i].position.x = p.point.x;
 			// 	this.players[i].position.y = p.point.y;
-			// }				
+			// }
 		}
 
 		//this.physics.arcade.collide(this.ball, this.borderGroup, this.wallCollision, null, this);
@@ -251,7 +251,7 @@ Ball.Game.prototype = {
 			window.navigator.vibrate(100);
 		}
 
-		
+
 		var angulo = Player._velocity * 360;
 
 		Player.resetVelocity();
