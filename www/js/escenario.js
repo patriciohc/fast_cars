@@ -11,7 +11,7 @@ var escenario = {
         escenario.isMultiplayer = isMultiplayer;
         server.socket.on('setEscenario', escenario.setEscenario);
         server.socket.on('playersComplete', escenario.setPlayers);
-        server.socket.on('infoPlayers', escenario.setInfoPlayers);
+        server.socket.on('setInfoPlayers', escenario.setInfoPlayers);
         server.socket.on('onWin', escenario.onWin);
     },
 
@@ -25,7 +25,7 @@ var escenario = {
     },
 
     setInfoPlayers: function(data){
-        escenario.game.players = data;    
+        escenario.players[data.idPlayer] = data.info;
     },
 
     setEscenario: function(data){

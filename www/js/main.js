@@ -61,7 +61,7 @@ var main = {
                 alert("Indique el numero de jugadores");
                 return false;
             }
-            if (n > 4 || n < 2){
+            if (n > 4 || n < 1){
                 alert("El numero de jugadores debe ser de minimo 2 y maximo 4");
                 return false;
             }

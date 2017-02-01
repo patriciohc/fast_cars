@@ -28,7 +28,7 @@ function joinPlayerInGame(req){
         socket.join(idGame);
         console.log("Game: " + game.id + " players:" + noPlayersAct + "/" +noPlayers);
         if ( noPlayersAct < noPlayers ){
-            
+
         } else {
             console.log("players completos");
             var data = {
@@ -41,6 +41,7 @@ function joinPlayerInGame(req){
             var ids = game.users.map(item => {
                 return item.id;
             });
+            console.log(ids);
             var dataPlayers = initPlayers(ids);
             game.status = 'running';
             //game.save();
@@ -87,7 +88,8 @@ function infoPlayer(req) {
             idPlayer: req.idPlayer,
             info: req.info,
         }
-        io.to(idGame).emit('infoPlayers', data);
+        console.log("enviando info");
+        io.to(idGame).emit('setInfoPlayers', data);
 
         //GAMES[req.idGame].players[req.idPlayer] = req.info;
         /*GAMES[req.idGame].players.find(function(item){
@@ -158,9 +160,10 @@ function initPlayers(ids){
         }
     }
     var players = {};
-    for (var i = 0; i < ids.lenght; i++) {
+    for (var i = 0; i < ids.length; i++) {
         players[ids[i]] = getConfigAuto();
     }
+    console.log(players)
     return players;
 }
 

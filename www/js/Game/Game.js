@@ -56,11 +56,11 @@ Ball.Game.prototype = {
 		//this.timerText.fixedToCamera = true;
 		//this.timerText.cameraOffset.setTo(15, 15);
 
-		this.players = new Array(escenario.game.noPlayers);
-
-		for (var i = 0; i < this.players.length; i++){
+		//this.players = new Array(escenario.game.noPlayers);
+		this.players = {};
+		for (var i in escenario.players){
 			this.players[i] = {};
-			this.players[i].id = escenario.players[i].id;
+			//this.players[i] = escenario.players[i].id;
 			this.players[i].graphics = this.add.sprite(
 				(60 + Ball._WIDTH * 0.15 * i),
 				(this.roadLength - 200),
@@ -71,7 +71,7 @@ Ball.Game.prototype = {
 			this.players[i].graphics.body.setSize(30, 68);
 			this.players[i].graphics.body.collideWorldBounds = true;
 
-			if (this.players[i].id == Player.auto.id) { // si se cumple se trata de este player
+			if (i == Player.id) { // si se cumple se trata de este player
 				this.game.camera.follow(this.players[i].graphics);
 				this.game.camera.deadzone = new Phaser.Rectangle(0, 400, 80, 80);
 				Ball._player = this.players[i].graphics;
@@ -188,15 +188,15 @@ Ball.Game.prototype = {
 	update: function() {
 		//player.auto.point = this.ball.position;
 
-		this.players.sort(function (a, b) {
-  			if (a.graphics.position.y > b.graphics.position.y) {
-    				return 1;
-  			}
-  			if (a.graphics.position.y < b.graphics.position.y) {
-    				return -1;
-  			}
-  			return 0;
-		});
+		// this.players.sort(function (a, b) {
+  // 			if (a.graphics.position.y > b.graphics.position.y) {
+    	// 			return 1;
+  // 			}
+  // 			if (a.graphics.position.y < b.graphics.position.y) {
+    	// 			return -1;
+  // 			}
+  // 			return 0;
+		// });
 
 		for (var i in this.players){
 			var player = this.players[i];
@@ -205,12 +205,14 @@ Ball.Game.prototype = {
 			if (graphics === null)
 				continue;
 
-			var info = escenario.game.players.find(function(item){
-				if (item.id === player.id)
-					return true;
-				else
-					return false;
-			}).info;
+			// var info = escenario.game.players.find(function(item){
+			// 	if (item.id === player.id)
+			// 		return true;
+			// 	else
+			// 		return false;
+			// }).info;
+
+			var info = escenario.players[i];
 
 			if (info === null)
 				continue;
@@ -221,11 +223,11 @@ Ball.Game.prototype = {
 			this.physics.arcade.collide(graphics, this.carsNoPlayers, this.wallCollision, null, this);
 			this.physics.arcade.collide(graphics, this.obstaculos, this.wallCollision, null, this);
 
-			if (player.id == Player.auto.id){
-				this.levelText.setText("Lugar: "+ (parseInt(i) + 1) +" / "+ escenario.game.players.length);
-				if (graphics.position.y <= 100 ){
-					Player.sendWin();
-				}
+			if (i == Player.id){
+				// this.levelText.setText("Lugar: "+ (parseInt(i) + 1) +" / "+ escenario.game.noPlayers);
+				// if (graphics.position.y <= 100 ){
+				// 	Player.sendWin();
+				// }
 			}
 
 			// reubicamos el auto

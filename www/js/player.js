@@ -6,8 +6,10 @@ var Player = {
     _velocity: 0,
     _factorVelocity_X: 0,
     _factorVelocity_Y: 0,
+    id: null,
 
     init: function(player){
+        Player.id = player.id;
         Player.auto.init(player.id);
     },
 
@@ -88,7 +90,7 @@ var Player = {
             return escenario.game.players.find(function(element){
                 if (element.id == auto.id)
                     return true;
-                else 
+                else
                     return false;
             }).velocityX;
             //return escenario.game.players[player.auto.id].velocityX;
@@ -98,7 +100,7 @@ var Player = {
             return escenario.game.players.find(function(element){
                 if (element.id == auto.id)
                     return true;
-                else 
+                else
                     return false;
             }).velocityY;
             //return escenario.game.players[player.auto.id].velocityY;

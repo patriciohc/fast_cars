@@ -4,7 +4,7 @@ var server = {
 
     //ip: "localhost",
     //ip: "192.168.0.11",
-    ip: "192.168.1.87",
+    ip: "192.168.1.107",
     port: "8080",
     socket: null,
 
