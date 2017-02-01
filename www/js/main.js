@@ -128,7 +128,7 @@ var main = {
     startGame: function(){
         $("#pleaseWaitDialog").modal("hide");
         $("#datosUsuario").hide();
-        $("#game-phaser").show();
+        $("#loading").show();
         (function() {
             var game = new Phaser.Game(320, 480, Phaser.CANVAS, 'game-phaser');
             game.state.add('Boot', Ball.Boot);

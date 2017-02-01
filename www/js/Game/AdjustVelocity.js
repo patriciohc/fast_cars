@@ -1,5 +1,5 @@
 /*
-Ajusta velocidad para que todos los dispositivos 
+Ajusta velocidad para que todos los dispositivos
 se sincronicen correctamanete
 */
 
@@ -7,9 +7,8 @@ Ball.AdjustVelocity = function(game) {};
 
 Ball.AdjustVelocity.prototype = {
 	create: function() {
-
 		this.TIEMPO = 5000; // timpo deseado recorrer extremo a extremo
-		this.TOLERANCIA = 50; // tolerancia en milisegundos
+		this.TOLERANCIA = 80; // tolerancia en milisegundos
 
 		this.velocity = 100;
 		this.timeInit = new Date().getTime();
@@ -31,7 +30,7 @@ Ball.AdjustVelocity.prototype = {
 
 	update: function() {
 
-		if (Math.round(this.test.position.x) >= 305){
+		if (Math.round(this.test.position.x) >= 305) {
 			var newTime = new Date().getTime();
 			var time = newTime - this.timeInit;
 
@@ -40,7 +39,10 @@ Ball.AdjustVelocity.prototype = {
 			if (this.TIEMPO - this.TOLERANCIA < time && this.TIEMPO + this.TOLERANCIA > time ) {
 				console.log("velocidad ajustada correctamente,  tiempo obtenido: " + time);
 				Player.setFactorVelocity(this.velocity * 2, this.velocity * 3);
+				$("#mainGame").show();
+				$("#loading").hide();
 				this.game.state.start('Game');
+				return;
 			}
 
 			this.velocity = (this.vd * this.velocity) / v;

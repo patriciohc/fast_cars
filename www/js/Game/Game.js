@@ -84,50 +84,14 @@ Ball.Game.prototype = {
 		//this.showLevel();
 
 		//this.keys = this.game.input.keyboard.createCursorKeys();
-		this.game.input.keyboard.onUpCallback = this.eventUpKeyBoard;
-		this.game.input.keyboard.onDownCallback = this.eventDownKeyBoard;
+		//this.game.input.keyboard.onUpCallback = this.eventUpKeyBoard;
+		//this.game.input.keyboard.onDownCallback = this.eventDownKeyBoard;
 
 		window.addEventListener("deviceorientation", this.handleOrientation, true);
 		this.time.events.loop(Phaser.Timer.SECOND, this.updateCounter, this);
 		this.bounceSound = this.game.add.audio('audio-bounce');
 		this.showObstaculos();
 	},
-
-	eventUpKeyBoard: function(evt){
-
-		switch(evt.key){
-			case "ArrowUp":
-				Player.incVelocity();
-				break;
-
-			case "ArrowDown":
-				Player.decVelocity();
-				break;
-
-			case "ArrowLeft":
-				Player.xNotMove();
-				break;
-
-			case "ArrowRight":
-				Player.xNotMove();
-				break;
-		}
-
-	},
-
-	eventDownKeyBoard: function(evt){
-
-		switch(evt.key){
-			case "ArrowLeft":
-				Player.moveLeft();
-				break;
-
-			case "ArrowRight":
-				Player.moveRight();
-				break;
-		}
-	},
-
 
 	showObstaculos: function() {
 

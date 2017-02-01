@@ -2,22 +2,25 @@
 <html>
 <head>
 	<meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
 	<title>Cyber Orb demo</title>
 	<link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
 <!--	<style> body { margin: 0; background: #2B2E31 url(img/screen-bg.png) repeat; } </style>-->
     <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="css/loading.css" />
 
 	<script src="libs/jquery/dist/jquery.min.js"></script>
-    <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
+  	<script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
 	<!-- <script src="js/phaser-arcade-physics.2.2.2.min.js"></script> -->
 	<script src="libs/phaser/build/phaser.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 
 	<script src="js/Game/Boot.js"></script>
 	<script src="js/Game/Preloader.js"></script>
 	<script src="js/Game/AdjustVelocity.js"></script>
 	<script src="js/Game/Game.js"></script>
+	<script src="js/Game/buttons.js"></script>
 
 	<script src="js/main.js"></script>
 	<script src="js/tools.js"></script>
@@ -25,6 +28,29 @@
 	<script src="js/escenario.js"></script>
 	<script src="js/server.js"></script>
 
+	<style>
+		.group-btn-games {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 50px;
+		}
+
+		.div-btn-game {
+			width: 25%;
+			height: 100%;
+			float: left;
+			font-size: 24px;
+			background-color: #292b37;
+			color: white;
+			border: solid 1px;
+			border-color:  white;
+			padding-top: 2%;
+			cursor: pointer;
+			text-align: center;
+		}
+
+	</style>
 </head>
 <body>
     <!-- inicio -->
@@ -91,7 +117,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Modal -->
@@ -162,14 +187,31 @@
         </div>
     </div>
 
-	<div id="game-phaser" style="display:none;"></div>
+	<div id="mainGame" style="display:none;">
+		<div id="game-phaser"></div>
+		<div class="group-btn-games">
+			<div class="div-btn-game" id="ArrowLeft" onmousedown="Buttons.eventDownButton(this)" onmouseup="Buttons.eventUpButton(this)"><<</div>
+			<div class="div-btn-game" id="ArrowUp" onmouseup="Buttons.eventUpButton(this)">+</div>
+			<div class="div-btn-game" id="ArrowDown" onmouseup="Buttons.eventUpButton(this)">-</div>
+			<div class="div-btn-game" id="ArrowRight" onmousedown="Buttons.eventDownButton(this)" onmouseup="Buttons.eventUpButton(this)">>></div>
+		</div>
+	</div>
+
+	<div id="loading" style="display:none;"> </div>
 
 <script>
-
 window.onload = function(){
+	(function (){
+		var l = document.getElementById("loading");
+		for (var i = 0; i < 34; i++) {
+			var p = document.createElement("p");
+			l.appendChild(p);
+		}
+	})()
+
     main.init();
 }
-
 </script>
+
 </body>
 </html>
