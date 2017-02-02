@@ -17,6 +17,8 @@ var main = {
         var btnCancelJoin = document.getElementById("btnCancelJoin");
         btnCancelJoin.onclick = main.cancelJoin;
 
+        $("#mainGame").css({height:  $( window ).height()});
+        //$("#loading").css({height:  $( window ).height() - 80});
         //main.startGame(null);
         main.getGames();
     },
@@ -104,6 +106,7 @@ var main = {
         server.get("/api/game", {}, function(games){
             main._games = games;
             var lista = document.getElementById("listGames");
+            if (!lista) return;
             lista.innerHTML = "";
             for(var i in main._games){
                 var item = main._games[i];
@@ -130,7 +133,7 @@ var main = {
         $("#datosUsuario").hide();
         $("#loading").show();
         (function() {
-            var game = new Phaser.Game(320, 480, Phaser.CANVAS, 'game-phaser');
+            var game = new Phaser.Game($(window).width(), $(window).height(), Phaser.CANVAS, 'game-phaser');
             game.state.add('Boot', Ball.Boot);
             game.state.add('Preloader', Ball.Preloader);
             game.state.add('AdjustVelocity', Ball.AdjustVelocity);

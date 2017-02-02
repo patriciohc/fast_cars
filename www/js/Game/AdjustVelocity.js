@@ -8,7 +8,7 @@ Ball.AdjustVelocity = function(game) {};
 Ball.AdjustVelocity.prototype = {
 	create: function() {
 		this.TIEMPO = 5000; // timpo deseado recorrer extremo a extremo
-		this.TOLERANCIA = 80; // tolerancia en milisegundos
+		this.TOLERANCIA = 100; // tolerancia en milisegundos
 
 		this.velocity = 100;
 		this.timeInit = new Date().getTime();

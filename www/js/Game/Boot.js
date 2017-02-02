@@ -1,6 +1,6 @@
 var Ball = {
-	_WIDTH: 320,
-	_HEIGHT: 6000
+	_WIDTH: $(window).width(),
+	//_HEIGHT: 8000
 };
 Ball.Boot = function(game) {};
 Ball.Boot.prototype = {
