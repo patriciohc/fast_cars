@@ -20,6 +20,8 @@ app.use(bodyParser.json());
 
 app.use('/api', api);
 
-server.listen('8080', () =>{
-    console.log("servidor corriendo en http://localhost:8080");
+
+var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8080;
+server.listen(port, () =>{
+    console.log("servidor corriendo en http://localhost: " + port);
 });
