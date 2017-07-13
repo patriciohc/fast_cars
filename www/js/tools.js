@@ -14,7 +14,7 @@ var tools = {
         //contentType: "application/json; charset=utf-8",
         crossDomain: true,
         mimeType: "multipart/form-data",
-        url: "http://" + url,
+        url: "https://" + url,
         data: data,
         dataType: "json",
     }
