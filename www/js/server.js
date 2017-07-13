@@ -5,11 +5,11 @@ var server = {
     //ip: "localhost",
     ip: "fats-carts.herokuapp.com",
     //ip: "192.168.1.107",
-    port: "443",
+    port: "",
     socket: null,
 
     init: function(){
-        var urlServer = "http://"+server.ip+":"+server.port;
+        var urlServer = "https://"+server.ip+":"+server.port;
         server.socket = io.connect( urlServer, {"forceNew": true});
     },
 
