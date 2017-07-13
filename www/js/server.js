@@ -3,7 +3,7 @@
 var server = {
 
     //ip: "localhost",
-    ip: "dashboard.heroku.com",
+    ip: "fats-carts.herokuapp.com",
     //ip: "192.168.1.107",
     port: "443",
     socket: null,
