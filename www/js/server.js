@@ -3,9 +3,9 @@
 var server = {
 
     //ip: "localhost",
-    ip: "192.168.0.14",
+    ip: "dashboard.heroku.com",
     //ip: "192.168.1.107",
-    port: "8080",
+    port: "443",
     socket: null,
 
     init: function(){
