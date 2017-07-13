@@ -5,7 +5,7 @@ var server = {
     //ip: "localhost",
     ip: "fats-carts.herokuapp.com",
     //ip: "192.168.1.107",
-    port: "",
+    port: "443",
     socket: null,
 
     init: function(){
