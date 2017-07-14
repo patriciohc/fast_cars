@@ -1,11 +1,10 @@
 
-
 var main = {
 
     _games: null,
     user: null,
 
-    init: function(){
+    init: function() {
         server.init(); // inicializa la conexion con el servidor
         escenario.init(true);
         //Player.init();
@@ -16,11 +15,19 @@ var main = {
         btnCreteGame.onclick = main.createGame;
         var btnCancelJoin = document.getElementById("btnCancelJoin");
         btnCancelJoin.onclick = main.cancelJoin;
+        var btnSalir = document.getElementById("btnSalir");
+        btnSalir.onclick = main.logout;
 
         $("#mainGame").css({height:  $( window ).height()});
         //$("#loading").css({height:  $( window ).height() - 80});
         //main.startGame(null);
         main.getGames();
+
+        var user = sessionStorage.getItem('usuario');
+        if (user) {
+            main.user = JSON.parse(user);
+            main.loginStep2(main.user);
+        }
     },
 
     entrar: function() {
@@ -30,19 +37,31 @@ var main = {
         }
         server.post('/api/user', user, function(user){
             main.user = user;
-            Player.init(user);
-            $("#lbUser").html(user.userName);
-            $("#inicio").hide();
-            $("#datosUsuario").show();
+            sessionStorage.setItem('usuario', JSON.stringify(user));
+            main.loginStep2(main.user);
         });
+    },
+
+    loginStep2: function(user) {
+        Player.init(user);
+        $("#lbUser").html(user.userName);
+        $("#inicio").hide();
+        $("#datosUsuario").show();
     },
 
     cancelJoin: function(){
         server.socket.emit("cancelJoin", {idPlayer: Player.auto.id, idGame: escenario.game.id});
     },
 
-    login: function(){
+    login: function() {
 
+    },
+
+    logout: function() {
+        sessionStorage.clear();
+        $("#lbUser").html('');
+        $("#inicio").show();
+        $("#datosUsuario").hide();
     },
 
     register: function() {
@@ -113,7 +132,7 @@ var main = {
                 var li = document.createElement("li");
                 li.innerHTML = item.nameGame;
                 li.indexGame = i;
-                li.className = "list-group-item";
+                li.className = "collection-item";
                 li.style.cursor = "pointer";
                 li.onclick = join;
                 lista.appendChild(li);
@@ -124,14 +143,14 @@ var main = {
 
     joinAtGame: function(game) {
         escenario.setGame(game);
-        $("#pleaseWaitDialog").modal();
+        $("#pleaseWaitDialog").modal('open');
         Player.connect();
     },
 
     startGame: function(){
-        $("#pleaseWaitDialog").modal("hide");
+        //$("#pleaseWaitDialog").modal("hide");
         $("#datosUsuario").hide();
-        $("#loading").show();
+        $("#loading").modal('open');
         (function() {
             var game = new Phaser.Game($(window).width(), $(window).height(), Phaser.CANVAS, 'game-phaser');
             game.state.add('Boot', Ball.Boot);
@@ -144,3 +163,9 @@ var main = {
     }
 
 }
+
+
+$(document).ready(function(){
+  // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+  $('.modal').modal();
+});
